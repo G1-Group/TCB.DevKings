@@ -1,1 +1,2 @@
 # TCB.DevKings
+Norov Feruzbek
