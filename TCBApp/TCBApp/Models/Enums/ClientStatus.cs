@@ -1,4 +1,4 @@
-namespace TCBApp;
+namespace TCBApp.Models.Enums;
 
 public enum ClientStatus
 {
