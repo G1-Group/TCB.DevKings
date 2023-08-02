@@ -1,4 +1,5 @@
-namespace TCBApp;
+using TCBApp.Models.Enums;
+namespace TCBApp.Models;
 
 public class Client
 {

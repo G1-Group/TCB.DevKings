@@ -1,6 +1,6 @@
 using System.Reflection.Metadata.Ecma335;
 
-namespace TCBApp;
+namespace TCBApp.Models;
 
 public class User
 {
