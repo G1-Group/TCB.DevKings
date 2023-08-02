@@ -1,4 +1,5 @@
-namespace TCBApp;
+using TCBApp.Models;
+using TCBApp.Models.Enums;
 
 public class ChatModel
 {
