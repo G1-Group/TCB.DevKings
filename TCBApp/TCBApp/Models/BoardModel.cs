@@ -1,4 +1,4 @@
-namespace TCBApp;
+namespace TCBApp.Models;
 
 public class BoardModel
 {
