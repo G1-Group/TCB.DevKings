@@ -4,7 +4,7 @@ namespace TCBApp.Interface;
 
 public interface IConversationInterface
 {
-  public List<Client> VaitingUsers { get; set; }
+  public List<Client> WaitingUsers { get; set; }
   public ChatModel GetLastConversation(long ClientId);
 
   public int CheckConversationLimit(long ClientId);
