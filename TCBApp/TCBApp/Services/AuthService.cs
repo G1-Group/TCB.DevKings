@@ -5,18 +5,21 @@ namespace TCBApp.Services;
 
 public class AuthService:IAuthInterface
 {
-    public User CreateUser(long user_Id, string phoneNumber, long telegramClientId, string password)
+
+    public User Registration(long user_Id, long telgramClientId, string nickName, string password)
     {
-        throw new NotImplementedException();
+        User user = new User()
+        {
+            UserId = user_Id,
+            Password = password,
+            Nickname = nickName,
+            TelegramClientId = telgramClientId
+        };
+        return user;
     }
 
-    public bool RemoveUser(long user_Id)
+    public Client LogIn(User user)
     {
-        throw new NotImplementedException();
-    }
-
-    public User Finduser(long user_Id)
-    {
-        throw new NotImplementedException();
+        return new Client();
     }
 }

@@ -4,9 +4,9 @@ namespace TCBApp.Interface;
 
 public interface IAuthInterface
 {
-    
-        public User CreateUser(long user_Id,string phoneNumber,long telegramClientId,string password);
-        public bool RemoveUser(long user_Id);
-        public User Finduser(long user_Id);
+    public User Registration(long user_Id, long telgramClientId, string nickName, string password);
+        public Client LogIn(User user);
+       
+     
     
 }
