@@ -1,6 +1,6 @@
 
-
-namespace TCB_App;
+using Models.Enums.MessageType;
+namespace Models.Message;
 
 public class Message
 {
