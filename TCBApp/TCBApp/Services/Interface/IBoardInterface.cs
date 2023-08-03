@@ -10,4 +10,5 @@ public interface IBoardInterface
     public  Task<Client> FindClient(long id);
     public Task StartBoard(Update update,CancellationToken cancellationToken);
     public Task SendMessage(Update update, CancellationToken cancellationToken, string text);
+    public Task BackBoard(Update update, CancellationToken cancellationToken);
 }

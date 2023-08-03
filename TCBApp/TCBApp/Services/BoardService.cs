@@ -43,6 +43,11 @@ public class BoardService:IBoardInterface
     public async Task SendMessage(Update update, CancellationToken cancellationToken, string text)
     {
         throw new NotImplementedException();
-    }  
+    }
+
+    public async Task BackBoard(Update update, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 }
    
