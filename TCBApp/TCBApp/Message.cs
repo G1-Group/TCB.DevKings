@@ -1,8 +1,8 @@
 
 
-using Models.Enums.MessageType;
+using TCBApp.Models.Enums;
 
-namespace Models.Messages;
+namespace TCBApp.Models;
 
 public class Message
 {

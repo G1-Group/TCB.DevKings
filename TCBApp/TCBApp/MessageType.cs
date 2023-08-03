@@ -1,4 +1,4 @@
-namespace Models.Enums.MessageType;
+namespace TCBApp.Models.Enums;
 
 public class MessageType
 {
