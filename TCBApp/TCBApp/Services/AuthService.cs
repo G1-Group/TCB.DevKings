@@ -31,7 +31,7 @@ public class AuthService:IAuthInterface
                IsPremium = false,
                Nickname = UserClient.Nickname,
                TelegramClientId = user.TelegramClientId,
-               Status = ClientStatus.Enebled,
+               Status = ClientStatus.Enabled,
 
            };
            return client ;
