@@ -13,12 +13,12 @@ public class ConversationService:IConversationInterface
     }
     public ChatModel CreateConversation(ChatModel chat)
     {
-     return  _dataProvider.CreateConversation(chat);
+        throw new NotImplementedException();
     }
 
     public ChatModel StopConversation(long chatId)
     {
-        return _dataProvider.StopConversation(chatId);
+        throw new NotImplementedException();
     }
 
     public ChatModel GetLastConversation(long chatId)
@@ -28,16 +28,16 @@ public class ConversationService:IConversationInterface
 
     public ChatModel UpdateConversation(ChatModel chat)
     {
-        return _dataProvider.UpdateConversation(chat);
+        throw new NotImplementedException();
     }
 
     public ChatModel GetConversation(long chatId)
     {
-        return _dataProvider.GetConversation(chatId);
+        throw new NotImplementedException();
     }
 
     public List<ChatModel> GetAllConversation()
     {
-        return _dataProvider.GetAllConversation();
+        throw new NotImplementedException();
     }
 }
