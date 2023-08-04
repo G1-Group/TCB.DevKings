@@ -5,6 +5,7 @@ namespace TCBApp.Services;
 
 public class DataProvider
 {
+
     private readonly string _connectionString;
 
     public DataProvider(string connectionString)
@@ -46,3 +47,6 @@ public class DataProvider
     }
     
 }
+   
+}
+
