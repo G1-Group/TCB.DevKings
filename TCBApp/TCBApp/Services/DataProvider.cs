@@ -28,7 +28,7 @@ public partial class DataProvider
 
     public BoardModel UpdateBoard(BoardModel boardModel)
     {
-        Boards.Remove(Boards.Find(x => x.BoardId == boardModel.BoardId));
+        Boards.Remove(GetBoard(boardModel.BoardId));
         Boards.Add(boardModel);
         return boardModel;
     }
@@ -53,7 +53,7 @@ public partial class DataProvider
 
     public bool CheckExistBoard(long boardId)
     {
-        var board = Boards.Find(x => x.BoardId == boardId);
+        var board = GetBoard(boardId);
         if (board is null)
         {
             return false;
