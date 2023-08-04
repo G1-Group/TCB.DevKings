@@ -7,23 +7,25 @@ public class ClientService:DataProvider, IClientService
 {
     public Client CreateClient(Client data)
     {
-        base.SaveClient(data);
-        return data;
+        throw new NotImplementedException();
     }
 
     public Client RemoveClient(Client data)
     {
-        base.RemoveClient(data);
-        return data;
+        throw new NotImplementedException();
     }
 
     public Client FindClient(Client data)
     {
-        return base.FindClient(data);
+        throw new NotImplementedException();
     }
 
     public Client UpdateClient(Client data)
     {
         throw new NotImplementedException();
+    }
+
+    public ClientService(string connectionString) : base(connectionString)
+    {
     }
 }
