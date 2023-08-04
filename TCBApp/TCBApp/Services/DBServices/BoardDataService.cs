@@ -17,7 +17,7 @@ public class BoardDataService:DataProvider
     private string selectByIdQuery = $"SELECT * FROM {tableName} WHERE board_Id = @p0";
 
     private string insertQuery =
-        $"INSERT INTO {tableName} (board_id,nickname,owner_id,board_status) VALUES ( @p1, @p2, @p3,@p4);";
+        $"INSERT INTO {tableName} (board_id,nickname,owner_id,board_status) VALUES ( @p0, @p1, @p2,@p3);";
     
 
 
@@ -50,10 +50,10 @@ public class BoardDataService:DataProvider
         return await this.ExecuteNonResult(this.insertQuery, new NpgsqlParameter[]
         {
             
-            new NpgsqlParameter("@p1", board.BoardId),
-            new NpgsqlParameter("@p2", board.NickName),
-            new NpgsqlParameter("@p3", board.OwnerId),
-            new NpgsqlParameter("@p4", board.BoardStatus),
+            new NpgsqlParameter("@p0", board.BoardId),
+            new NpgsqlParameter("@p1", board.NickName),
+            new NpgsqlParameter("@p2", board.OwnerId),
+            new NpgsqlParameter("@p3", board.BoardStatus),
            
         });
     }
