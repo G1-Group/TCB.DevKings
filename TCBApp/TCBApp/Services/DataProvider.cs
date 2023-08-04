@@ -33,11 +33,11 @@ public partial class DataProvider
         return boardModel;
     }
     public BoardModel DeleteBoard(BoardModel boardModel)
-    { 
-        var board = Boards.Remove(Boards.Find(x => x.BoardId == boardModel.BoardId));
-        if (board)
+    {
+        if (CheckExistBoard(boardModel.BoardId))
         {
             Boards.Remove(boardModel);
+            
             return boardModel;
         }
         throw new Exception("Board is not found");
@@ -53,7 +53,7 @@ public partial class DataProvider
 
     public bool CheckExistBoard(long boardId)
     {
-        var board = GetAllBoards().Find(x => x.BoardId == boardId);
+        var board = Boards.Find(x => x.BoardId == boardId);
         if (board is null)
         {
             return false;
