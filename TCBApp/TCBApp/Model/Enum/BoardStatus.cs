@@ -1,10 +1,8 @@
 namespace TCBApp.Models.Enums;
 
-public class BoardStatus
-{
-    public enum boardStatus
+
+    public enum BoardStatus
     {
         enabled,
         disabled
     }
-}
