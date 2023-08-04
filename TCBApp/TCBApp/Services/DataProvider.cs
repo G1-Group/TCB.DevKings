@@ -4,21 +4,61 @@ namespace TCBApp.Services;
 
 public partial class DataProvider
 {
-    public List<Client> clients = new List<Client>();
-    public void SaveClient(Client data)
+    private List<BoardModel> Boards = new List<BoardModel>();
+    public BoardModel CreateBoard(BoardModel boardModel)
     {
-        clients.Add(data);
+        bool IsExisting = CheckExistBoard(boardModel.BoardId);
+        if (IsExisting)
+        {
+            Boards.Add(boardModel);
+            return boardModel;
+        }
+        throw new Exception("Board all ready exist");
+    }
+    public BoardModel StopBoard(long boarId)
+    {
+        var board = GetBoard(boarId);
+        if (board is not null)
+        {
+            Boards.Remove(board);
+            return board;
+        }
+        throw new Exception("Board is not found");
     }
 
-    public void RemoveClient(Client data)
+    public BoardModel UpdateBoard(BoardModel boardModel)
     {
-       var client= clients.Find(x => x.ClientId == data.ClientId);
-       clients.Remove(client);
+        Boards.Remove(Boards.Find(x => x.BoardId == boardModel.BoardId));
+        Boards.Add(boardModel);
+        return boardModel;
+    }
+    public BoardModel DeleteBoard(BoardModel boardModel)
+    { 
+        var board = Boards.Remove(Boards.Find(x => x.BoardId == boardModel.BoardId));
+        if (board)
+        {
+            Boards.Remove(boardModel);
+            return boardModel;
+        }
+        throw new Exception("Board is not found");
+    }
+    public BoardModel GetBoard(long boardId)
+    {
+        return Boards.Find(x => x.BoardId == boardId);
+    }
+    public List<BoardModel> GetAllBoards()
+    {
+        return Boards;
     }
 
-    public Client FindClient(Client data)
+    public bool CheckExistBoard(long boardId)
     {
-        return clients.Find(x => x.ClientId == data.ClientId);
-        
+        var board = GetAllBoards().Find(x => x.BoardId == boardId);
+        if (board is null)
+        {
+            return false;
+        }
+
+        return true;
     }
 }
