@@ -1,6 +1,7 @@
 using TCBApp.Interface;
 using TCBApp.Models;
 using Telegram.Bot.Types;
+using Message = TCBApp.Models.Message;
 
 namespace TCBApp.Services;
 
@@ -8,9 +9,26 @@ public class BoardService:IBoardInterface
 {
 
     private BoardDataService boardDataService;
+    private MessageDataService messageDataService;
     public int CreateBoard(BoardModel boardModel)
     {
         return boardDataService.Insert(boardModel).Result;
+    }
+    
+    public async Task<BoardModel> CreateNewBoard(long ownerId,string nickName)
+    {
+        BoardModel boardModel = new BoardModel()
+        {
+           OwnerId = ownerId,
+           NickName = nickName
+        };
+         boardDataService.Insert(boardModel);
+         throw new Exception("Error CreateNewBoard@ ");
+    }
+    
+    public Message ChangeBoardMessageStatus(long messageId,Message message)
+    {
+        return messageDataService.UpdateMessage(messageId, message).Result;
     }
 
     public BoardModel StopBoard(long boardId)
