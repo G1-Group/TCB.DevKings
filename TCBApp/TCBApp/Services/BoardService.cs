@@ -6,6 +6,7 @@ namespace TCBApp.Services;
 
 public class BoardService:IBoardInterface
 {
+
     private BoardDataService boardDataService;
     public int CreateBoard(BoardModel boardModel)
     {
@@ -25,6 +26,7 @@ public class BoardService:IBoardInterface
     public BoardModel UpdateBoard(long boardId,BoardModel boardModel)
     {
         return boardDataService.UpdateBoard(boardId,boardModel).Result;
+
     }
 
     public BoardModel GetBoard(long boardId)

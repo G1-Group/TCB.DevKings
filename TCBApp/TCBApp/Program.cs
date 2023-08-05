@@ -6,7 +6,21 @@ using TCBApp.Services;
 
  string connection = "Host=localhost; Port=5432; Database=postgres; username=postgres; password=3214";
 
- ConversationDataService service = new ConversationDataService(connection);
+
+ BoardDataService service = new BoardDataService(connection);
+
+
+ var res=service.Insert(new BoardModel
+ {
+  
+  NickName = "myboard2",
+  OwnerId = 2,
+  BoardStatus = BoardStatus.Processing
+ }).Result;
+   Console.WriteLine(res);
+
+
+ //ConversationDataService service = new ConversationDataService(connection);
 // var res= service.Insert(new ChatModel
 //  {
 //   CreatedDate = DateTime.Now,
@@ -16,9 +30,9 @@ using TCBApp.Services;
 //   Id = 2
 //  }).Result;
 //  
- var res = service.GetById(2).Result;
- Console.WriteLine(res.CreatedDate);
- Console.WriteLine(res.State);
+ // var res = service.GetById(2).Result;
+ // Console.WriteLine(res.CreatedDate);
+ // Console.WriteLine(res.State);
 // ClientDataService clientDataService = new ClientDataService(connection);
 // var res= clientDataService.Insert(new Client
 //  {
