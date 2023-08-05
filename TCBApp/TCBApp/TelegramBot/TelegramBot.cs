@@ -15,7 +15,7 @@ public class TelegramBot
     public TelegramBot()
     {
         
-        _client = new TelegramBotClient("");
+        _client = new TelegramBotClient("5767267731:AAEVGTs0gB_PmSOxRHpbA7g8WlWdZ4vu");
         
         _keyboard = new ReplyKeyboardMarkup(new[]
         {
