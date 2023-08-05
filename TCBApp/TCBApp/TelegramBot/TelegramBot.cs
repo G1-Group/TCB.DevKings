@@ -36,17 +36,12 @@ public class TelegramBot
         if (update.Message is Message message)
         {
             
-            if (message.Text == "/start")
-                await SendMessage(message, "Assalomu aleykum.");
+            
             
       
         }
     }
 
-    private async Task SendMessage(Message message, string text)
-    {
-        await _client.SendTextMessageAsync(message.Chat.Id, text);
-    }
 
 
     private async Task ErrorMessage(ITelegramBotClient bot, Exception exception, CancellationToken token)
