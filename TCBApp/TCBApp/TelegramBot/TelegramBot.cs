@@ -8,7 +8,7 @@ namespace TCBApp.TelegramBot;
 public class TelegramBot
 {
     private TelegramBotClient _client { get; set; }
-    private ReplyKeyboardMarkup _keyboard;
+    private ReplyKeyboardMarkup replyKeyboardMarkup;
 
 
     private KeyboardButton KeyboardButton;
@@ -17,7 +17,7 @@ public class TelegramBot
         
         _client = new TelegramBotClient("5767267731:AAEVGTs0gB_PmSOxRHpbA7g8WlWdZ4vu");
         
-        _keyboard = new ReplyKeyboardMarkup(new[]
+        replyKeyboardMarkup = new ReplyKeyboardMarkup(new[]
         {
             new[]
             {
@@ -28,7 +28,7 @@ public class TelegramBot
                 new KeyboardButton("Sign up")
             }
         });
-        _keyboard.ResizeKeyboard = true;
+        replyKeyboardMarkup.ResizeKeyboard = true;
         
     }
 
@@ -50,7 +50,7 @@ public class TelegramBot
         {
             
             if (message.Text == "/start")
-                await SendMessage(message, "Assalomu aleykum.",_keyboard);
+                await SendMessage(message, "Assalomu aleykum.",replyKeyboardMarkup);
             
       
         }
