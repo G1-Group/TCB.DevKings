@@ -19,13 +19,22 @@ public class SessionManager : ISessionManager<Session>
         if (user is null)
             throw new Exception("User not found");
 
-        return new Session()
+
+        var lastSession = sessions.FindLast(x => x.User.UserId == user.UserId);
+        if (lastSession is null)
         {
-            User = user,
-            Action = null,
-            Controller = null,
-            Id = 0
-        };
+            var session = new Session()
+            {
+                User = user,
+                Action = null,
+                Controller = null,
+                Id = 0
+            };
+            sessions.Add(session);
+            return session;
+        }
+
+        return lastSession;
     }
 
 
