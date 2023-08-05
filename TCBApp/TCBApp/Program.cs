@@ -2,22 +2,36 @@
 using TCBApp.Models;
 using TCBApp.Models.Enums;
 using TCBApp.Services;
+using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 
- string connection = "Host=localhost; Port=5432; Database=postgres; username=postgres; password=3214";
+string connection = "Host=localhost; Port=5432; Database=postgres; username=postgres; password=3214";
 
 
- BoardDataService service = new BoardDataService(connection);
+ MessageDataService service = new MessageDataService(connection);
 
+var res=service.Insert(new Message
+{
+ FromId = 1,
+ _Message = "HI",
+ ChatId = 0,
+ BoardId = 3,
+ MessageType = TCBApp.Models.Enums.MessageType.BoardMessage,
+ MessageStatus = MessageStatus.NotRead
+}).Result;
+Console.WriteLine(res);
 
- var res=service.Insert(new BoardModel
- {
-  
-  NickName = "myboard2",
-  OwnerId = 2,
-  BoardStatus = BoardStatus.Processing
- }).Result;
-   Console.WriteLine(res);
+ // BoardDataService service = new BoardDataService(connection);
+ //
+ //
+ // var res=service.Insert(new BoardModel
+ // {
+ //  
+ //  NickName = "myboard2",
+ //  OwnerId = 2,
+ //  BoardStatus = BoardStatus.Processing
+ // }).Result;
+ //   Console.WriteLine(res);
 
 
  //ConversationDataService service = new ConversationDataService(connection);

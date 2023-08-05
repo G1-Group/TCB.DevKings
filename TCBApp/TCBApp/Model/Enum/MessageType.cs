@@ -1,8 +1,8 @@
 namespace TCBApp.Models.Enums;
 
 
-    public enum MyEnum
-    { 
+    public enum MessageType
+    {
         BoardMessage,
         AnonymChatMessage
     }

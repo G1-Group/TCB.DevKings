@@ -10,5 +10,6 @@ public class Message
     public object _Message { get; set; }
     public long ChatId { get; set; }
     public long BoardId { get; set; }
-    public MyEnum MessageType { get; set; }
+    public MessageType MessageType { get; set; }
+    public MessageStatus MessageStatus { get; set; }
 }
