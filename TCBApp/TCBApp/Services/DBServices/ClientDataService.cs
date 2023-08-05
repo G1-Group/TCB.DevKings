@@ -9,6 +9,8 @@ public class ClientDataService:DataProvider
 {
     private static string tableName = "clients";
 
+    private string updateQuery =
+        $"UPDATE {tableName} SET (user_id,user_name,nickname,status,ispremium) VALUES ( @p1, @p2, @p3,@p4,@p5) WHERE client_id=@p0; ";
     private string selectQuery = $"SELECT * FROM {tableName}";
     private string selectByIdQuery = $"SELECT * FROM {tableName} WHERE client_id = @p0";
 
@@ -43,6 +45,7 @@ public class ClientDataService:DataProvider
         return result.ElementAtOrDefault(0);
     }
 
+ 
     public async Task<int> Insert(Client client)
     {
         return await this.ExecuteNonResult(this.insertQuery, new NpgsqlParameter[]
@@ -55,7 +58,19 @@ public class ClientDataService:DataProvider
             new NpgsqlParameter("@p5", client.IsPremium),
         });
     }
-
+    public async Task<Client?> Update(Client client)
+    {
+        await this.ExecuteNonResult(updateQuery, new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0",client.ClientId),
+            new NpgsqlParameter("@p1", client.UserId),
+            new NpgsqlParameter("@p2", client.UserName),
+            new NpgsqlParameter("@p3", client.Nickname),
+            new NpgsqlParameter("@p4", client.Status),
+            new NpgsqlParameter("@p5", client.IsPremium),
+        });
+        return client; 
+    }
     private Client ReaderDataToModel(NpgsqlDataReader reader)
     {
         return new Client()
