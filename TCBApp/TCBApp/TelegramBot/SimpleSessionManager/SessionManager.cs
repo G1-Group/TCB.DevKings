@@ -19,6 +19,7 @@ public class SessionManager : ISessionManager<Session>
         if (user is null)
             throw new Exception("User not found");
  
+     var lastSession=  sessions.FindLast(x => x.User.UserId == user.UserId);
        var session= new Session()
         {
             User = user,
@@ -27,8 +28,7 @@ public class SessionManager : ISessionManager<Session>
             Id = 0
         };
        sessions.Add(session);
-       session=  sessions.FindLast(x => x.User.UserId == user.UserId);
-       return session;
+       return lastSession;
     }
 
 
