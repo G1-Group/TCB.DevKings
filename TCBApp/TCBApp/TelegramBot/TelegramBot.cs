@@ -6,7 +6,9 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace TCBApp.TelegramBot;
 
 public class TelegramBot
+
 {
+    public List<Update> UpdateHandler { get; set; } = new List<Update>();
     private TelegramBotClient _client { get; set; }
     private ReplyKeyboardMarkup _keyboard;
 
