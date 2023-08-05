@@ -9,11 +9,15 @@ public class TelegramBot
 {
     private TelegramBotClient _client { get; set; }
     private ReplyKeyboardMarkup _keyboard;
+    public delegate Task UpdateHandlerDelegate(ITelegramBotClient bot, Update update, CancellationToken cancellationToken);
+
+    private List<UpdateHandlerDelegate> updateHandlers { get; set; }
 
 
     private KeyboardButton KeyboardButton;
     public TelegramBot()
     {
+       updateHandlers = new List<UpdateHandlerDelegate>();
         
         _client = new TelegramBotClient("5767267731:AAEVGTs0gB_PmSOxRHpbA7g8WlWdZ4vu");
         
@@ -42,6 +46,7 @@ public class TelegramBot
         var cancellationToken = new CancellationToken();
         var options = new ReceiverOptions();
         await _client.ReceiveAsync(OnMessage, ErrorMessage, options, cancellationToken);
+        
     }
 
     private async Task OnMessage(ITelegramBotClient bot, Update update, CancellationToken token)
@@ -67,5 +72,7 @@ public class TelegramBot
         // Handle any errors that occur during message processing here.
     }
   
-
+    
+   
+ 
 }
