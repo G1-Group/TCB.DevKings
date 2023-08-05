@@ -18,17 +18,23 @@ public class SessionManager : ISessionManager<Session>
         var user = await _userDataService.GetUserByChatId(chatId);
         if (user is null)
             throw new Exception("User not found");
- 
-     var lastSession=  sessions.FindLast(x => x.User.UserId == user.UserId);
-       var session= new Session()
+
+
+        var lastSession = sessions.FindLast(x => x.User.UserId == user.UserId);
+        if (lastSession is null)
         {
-            User = user,
-            Action = null,
-            Controller = null,
-            Id = 0
-        };
-       sessions.Add(session);
-       return lastSession;
+            var session = new Session()
+            {
+                User = user,
+                Action = null,
+                Controller = null,
+                Id = 0
+            };
+            sessions.Add(session);
+            return session;
+        }
+
+        return lastSession;
     }
 
 
