@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace TCBApp.Models;
 
 public class Session
