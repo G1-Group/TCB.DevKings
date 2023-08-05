@@ -37,15 +37,15 @@ public class TelegramBot
         {
             
             if (message.Text == "/start")
-                await SendMessage(message, "Assalomu aleykum.",replyKeyboardMarkup);
+                await SendMessage(message, "Assalomu aleykum.");
             
       
         }
     }
 
-    private async Task SendMessage(Message message, string text,ReplyKeyboardMarkup markup)
+    private async Task SendMessage(Message message, string text)
     {
-        await _client.SendTextMessageAsync(message.Chat.Id, text,replyMarkup:markup);
+        await _client.SendTextMessageAsync(message.Chat.Id, text);
     }
 
 
