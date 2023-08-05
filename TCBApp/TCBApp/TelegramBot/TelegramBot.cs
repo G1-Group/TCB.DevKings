@@ -8,7 +8,9 @@ namespace TCBApp.TelegramBot;
 public class TelegramBot
 {
     private TelegramBotClient _client { get; set; }
-    private ReplyKeyboardMarkup _keyboard;
+
+  
+
     public delegate Task UpdateHandlerDelegate(ITelegramBotClient bot, Update update, CancellationToken cancellationToken);
 
     private List<UpdateHandlerDelegate> updateHandlers { get; set; }
@@ -21,19 +23,7 @@ public class TelegramBot
         
         _client = new TelegramBotClient("5767267731:AAEVGTs0gB_PmSOxRHpbA7g8WlWdZ4vu");
         
-        _keyboard = new ReplyKeyboardMarkup(new[]
-        {
-            new[]
-            {
-                new KeyboardButton("Login")
-            },
-            new[]
-            {
-                new KeyboardButton("Sign up")
-            }
-        });
-        _keyboard.ResizeKeyboard = true;
-        
+       
     }
 
     public async Task Start()
@@ -54,17 +44,12 @@ public class TelegramBot
         if (update.Message is Message message)
         {
             
-            if (message.Text == "/start")
-                await SendMessage(message, "Assalomu aleykum.",_keyboard);
+            
             
       
         }
     }
 
-    private async Task SendMessage(Message message, string text,ReplyKeyboardMarkup markup)
-    {
-        await _client.SendTextMessageAsync(message.Chat.Id, text,replyMarkup:markup);
-    }
 
 
     private async Task ErrorMessage(ITelegramBotClient bot, Exception exception, CancellationToken token)
