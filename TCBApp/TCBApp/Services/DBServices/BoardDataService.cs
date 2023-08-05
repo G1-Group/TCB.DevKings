@@ -17,7 +17,7 @@ public class BoardDataService:DataProvider
     private string selectByIdQuery = $"SELECT * FROM {tableName} WHERE board_Id = @p0";
 
     private string insertQuery =
-        $"INSERT INTO {tableName} (board_id,nickname,owner_id,board_status) VALUES ( @p0, @p1, @p2,@p3);";
+        $"INSERT INTO {tableName} (nickname,owner_id,board_status) VALUES ( @p1, @p2,@p3);";
     
 
 
@@ -50,7 +50,6 @@ public class BoardDataService:DataProvider
         return await this.ExecuteNonResult(this.insertQuery, new NpgsqlParameter[]
         {
             
-            new NpgsqlParameter("@p0", board.BoardId),
             new NpgsqlParameter("@p1", board.NickName),
             new NpgsqlParameter("@p2", board.OwnerId),
             new NpgsqlParameter("@p3", board.BoardStatus),
@@ -65,7 +64,7 @@ public class BoardDataService:DataProvider
             BoardId = reader.GetInt32(0),
             NickName= reader.GetString(1),
             OwnerId = reader.GetInt32(2),
-            BoardStatus= (BoardStatus)Enum.Parse(typeof(ClientStatus), reader.GetString(3), true),
+            BoardStatus= (BoardStatus)Enum.Parse(typeof(BoardStatus), reader.GetString(3), true),
            
         };
     }
