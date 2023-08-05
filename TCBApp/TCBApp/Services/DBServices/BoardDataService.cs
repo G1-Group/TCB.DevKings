@@ -14,10 +14,16 @@ public class BoardDataService:DataProvider
     private static string tableName = "boards";
 
     private string selectQuery = $"SELECT * FROM {tableName}";
+    
     private string selectByIdQuery = $"SELECT * FROM {tableName} WHERE board_Id = @p0";
-
+    
+    string updateQuery = $"UPDATE boards SET owner_id = @p1 , nick_name = @p2  WHERE board_id = @p0 ;";
+    
     private string insertQuery =
         $"INSERT INTO {tableName} (nickname,owner_id,board_status) VALUES ( @p1, @p2,@p3);";
+    
+    string deleteQuery = $"UPDATE boards SET board_status = @p3  WHERE board_id = @p0 ;";
+    
     
 
 
@@ -32,7 +38,7 @@ public class BoardDataService:DataProvider
     }
 
 
-    public async Task<BoardModel?> GetById(int id)
+    public async Task<BoardModel?> GetById(long id)
     {
         var reader = await this.ExecuteWithResult(this.selectByIdQuery, new NpgsqlParameter[]
         {
@@ -67,5 +73,39 @@ public class BoardDataService:DataProvider
             BoardStatus= (BoardStatus)Enum.Parse(typeof(BoardStatus), reader.GetString(3), true),
            
         };
+    }
+    public async Task<BoardModel> UpdateBoard(long Id, BoardModel boardModel)
+    {
+        var result= await this.ExecuteNonResult(updateQuery, new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", Id),
+            new NpgsqlParameter("@p1", boardModel.OwnerId),
+            new NpgsqlParameter("@p2", boardModel.NickName)
+        });
+        return await FindByIdBoard(Id);
+    }
+    
+    public async Task<BoardModel> FindByIdBoard(long Id)
+    {
+        var reader = await this.ExecuteWithResult(selectByIdQuery, new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", Id)
+        });
+        List<BoardModel> boards = new List<BoardModel>();
+        while (reader.Read())
+            boards.Add(ReaderDataToModel(reader));
+        return boards.FirstOrDefault();
+
+    }
+    
+    
+    public async Task<BoardModel> DeleteBoard(long Id)
+    {
+        BoardModel boardModel =await FindByIdBoard(Id);
+        var result = await ExecuteNonResult(deleteQuery, new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", Id)
+        });
+        return boardModel;
     }
 }
