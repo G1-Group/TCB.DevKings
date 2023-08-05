@@ -32,7 +32,7 @@ public class UserDataService:DataProvider
     }
 
 
-    public async Task<Models.User?> GetById(int id)
+    public async Task<Models.User?> GetById(long id)
     {
         var reader = await this.ExecuteWithResult(this.selectByIdQuery, new NpgsqlParameter[]
         {
