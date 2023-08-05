@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using TCBApp.Models;
 using TCBApp.Models.Enums;
 
 public class ChatModel

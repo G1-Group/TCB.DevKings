@@ -1,5 +1,3 @@
-using TCBApp.Models.Enums;
-
 namespace TCBApp.Models;
 
 public class UserRegstration
