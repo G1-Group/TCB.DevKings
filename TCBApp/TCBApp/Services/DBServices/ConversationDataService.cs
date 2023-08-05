@@ -12,7 +12,7 @@ public class ConversationDataService : DataProvider
 
     private string selectQuery = $"SELECT * FROM {tableName}";
     private string selectByIdQuery = $"SELECT * FROM {tableName} WHERE chat_id = @p0";
-
+    private string updateQuery=$"UPDATE anonym_chats SET state=@p1, created_date=@p2,from_id=@p3,to_id=@p4 WHERE chat_id = @p0 ;";
     private string insertQuery =
         $"INSERT INTO {tableName} (chat_id,state,created_date,from_id,to_id) VALUES (@p0, @p1, @p2, @p3,@p4);";
     
@@ -31,7 +31,7 @@ public class ConversationDataService : DataProvider
     }
 
 
-    public async Task<ChatModel?> GetById(int id)
+    public async Task<ChatModel?> GetById(long id)
     {
         var reader = await this.ExecuteWithResult(this.selectByIdQuery, new NpgsqlParameter[]
         {
@@ -68,4 +68,16 @@ public class ConversationDataService : DataProvider
         };
     }
 
+    public async Task<ChatModel> UpdateConversation(long Id, ChatModel data)
+    {
+        var result= await this.ExecuteNonResult(updateQuery, new NpgsqlParameter[]
+        {
+           
+            new NpgsqlParameter("@p1", data.State),
+            new NpgsqlParameter("@p2", data.CreatedDate),
+            new NpgsqlParameter("@p3", data.FromId),
+            new NpgsqlParameter("@p4", data.ToId)
+        });
+        return await GetById(Id);
+    }
 }
