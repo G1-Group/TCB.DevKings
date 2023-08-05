@@ -6,40 +6,35 @@ namespace TCBApp.Services;
 
 public class BoardService:IBoardInterface
 {
-    private DataProvider dataProvider { get; }
-
-    public BoardService(DataProvider _dataProvicer)
+    private BoardDataService boardDataService;
+    public int CreateBoard(BoardModel boardModel)
     {
-        _dataProvicer = dataProvider;
-    }
-    public BoardModel CreateBoard(BoardModel boardModel)
-    {
-        return dataProvider.CreateBoard(boardModel);
+        return boardDataService.Insert(boardModel).Result;
     }
 
     public BoardModel StopBoard(long boardId)
     {
-        return dataProvider.StopBoard(boardId);
+        return boardDataService.DeleteBoard(boardId).Result;
     }
 
     public BoardModel DeleteBoard(BoardModel boardModel)
     {
-        return dataProvider.DeleteBoard(boardModel);
+        return boardDataService.DeleteBoard(boardModel.BoardId).Result;
     }
 
-    public BoardModel UpdateBoard(BoardModel boardModel)
+    public BoardModel UpdateBoard(long boardId,BoardModel boardModel)
     {
-        return dataProvider.UpdateBoard(boardModel);
+        return boardDataService.UpdateBoard(boardId,boardModel).Result;
     }
 
     public BoardModel GetBoard(long boardId)
     {
-        return dataProvider.GetBoard(boardId);
+        return boardDataService.GetById(boardId).Result;
     }
 
     public List<BoardModel> GetAllBoards()
     {
-        return dataProvider.GetAllBoards();
+        return boardDataService.GetAll().Result;
     }
 }
    
