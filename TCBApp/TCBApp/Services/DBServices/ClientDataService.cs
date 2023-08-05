@@ -32,7 +32,7 @@ public class ClientDataService:DataProvider
     }
 
 
-    public async Task<Client?> GetById(int id)
+    public async Task<Client?> GetById(long id)
     {
         var reader = await this.ExecuteWithResult(this.selectByIdQuery, new NpgsqlParameter[]
         {
