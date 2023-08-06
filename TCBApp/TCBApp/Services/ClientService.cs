@@ -17,7 +17,8 @@ public class ClientService: IClientService
         var client = await _clientDataService.GetById(data.ClientId);
         if (client is null)
         {
-           client=await _clientDataService.Insert(data);
+           await _clientDataService.Insert(data);
+           return data;
         }
 
         return client;
