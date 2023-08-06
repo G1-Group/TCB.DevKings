@@ -46,9 +46,9 @@ public class ClientDataService:DataProvider
     }
 
  
-    public async Task<int> Insert(Client client)
+    public async Task<int?> Insert(Client client)
     {
-        return await this.ExecuteNonResult(this.insertQuery, new NpgsqlParameter[]
+       return  await this.ExecuteNonResult(this.insertQuery, new NpgsqlParameter[]
         {
             
             new NpgsqlParameter("@p1", client.UserId),
@@ -57,6 +57,7 @@ public class ClientDataService:DataProvider
             new NpgsqlParameter("@p4", client.Status),
             new NpgsqlParameter("@p5", client.IsPremium),
         });
+      
     }
     public async Task<Client?> Update(Client client)
     {

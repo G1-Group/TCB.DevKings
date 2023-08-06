@@ -3,29 +3,44 @@ using TCBApp.Models;
 
 namespace TCBApp.Services;
 
-public class ClientService:DataProvider, IClientService
+public class ClientService: IClientService
 {
-    public Client CreateClient(Client data)
+    private ClientDataService _clientDataService;
+
+    public ClientService(ClientDataService clientDataService)
     {
-        throw new NotImplementedException();
+        _clientDataService = clientDataService;
     }
 
-    public Client RemoveClient(Client data)
+    public async Task<Client?> CreateClient(Client data)
     {
-        throw new NotImplementedException();
+        var client = await _clientDataService.GetById(data.ClientId);
+        if (client is null)
+        {
+           await _clientDataService.Insert(data);
+           return data;
+        }
+
+        return client;
     }
 
-    public Client FindClient(Client data)
+    public async Task<Client?> RemoveClient(Client data)
     {
-        throw new NotImplementedException();
+       var client=await _clientDataService.Update(data);
+       return client;
     }
 
-    public Client UpdateClient(Client data)
+    public async Task<Client?> FindClient(Client data)
     {
-        throw new NotImplementedException();
+        var client =await _clientDataService.GetById(data.ClientId);
+        return client;
     }
 
-    public ClientService(string connectionString) : base(connectionString)
+    public async Task<Client?> UpdateClient(Client data)
     {
+        var client =await _clientDataService.Update(data);
+        return client;
     }
+
+    
 }
