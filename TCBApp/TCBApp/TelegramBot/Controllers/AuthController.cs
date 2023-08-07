@@ -21,7 +21,7 @@ public class AuthController:ControllerBase
         login = context.Update.Message.Text;
 
         _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Enter your password: ").Wait();
-        context.Session.Action = "LoginUserPassword";
+        context.Session.Action = "LoginUserLogin";
     }
 
     public void LoginUserPassword(ControllerContext context)
@@ -36,11 +36,14 @@ public class AuthController:ControllerBase
             },
             TelegramChatId =context.Update.Message.Chat.Id 
         });
+        context.Session.Action = "LoginUserPassword";
+       
     }
 
     public void RegstrationUserRegistration(ControllerContext context)
     {
         _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Enter phone number as \"+998900000000\"");
+        context.Session.Action = "RegstrationUserRegistration";
 
     }
 
@@ -48,7 +51,8 @@ public class AuthController:ControllerBase
     {
         phonenumber = context.Update.Message.Text;
         _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Please Enter your password");
-        
+        context.Session.Action = "RegstraionUserPhoneNumber";
+
     }
 
     public void RegstrationPassword(ControllerContext context)
@@ -65,6 +69,7 @@ public class AuthController:ControllerBase
             },
             TelegramChatId = context.Update.Message.Chat.Id
         });
+        context.Session.Action = "RegstrationPassword";
     }
 
     

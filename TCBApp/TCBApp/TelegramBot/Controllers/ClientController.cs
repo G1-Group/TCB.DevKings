@@ -24,7 +24,8 @@ public class ClientController:ControllerBase
             UserName = userName
         });
         _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Succesfuly changed");
-        
+        context.Session.Action = "UpdateClientUsername";
+
     }
 
     public void ClientUpdateNickName(ControllerContext context)
@@ -36,6 +37,7 @@ public class ClientController:ControllerBase
             Nickname = nickName
         });
         _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Succesfuly changed");
+        context.Session.Action = "UpdateClientNickname";
 
     }
     public override void HandleAction(ControllerContext context)

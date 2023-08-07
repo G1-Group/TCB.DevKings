@@ -25,8 +25,6 @@ public class TelegramBot
         ControllerManager = manager;
         SessionManager = sessionManager;
         updateHandlers = new List<UpdateHandlerDelegate>();
-        
-    
     }
 
     public async Task Start()
@@ -46,9 +44,7 @@ public class TelegramBot
     {
       
          
-            
-            
-      
+        
         
     }
 
