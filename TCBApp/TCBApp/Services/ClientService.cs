@@ -42,5 +42,16 @@ public class ClientService: IClientService
         return client;
     }
 
-    
+    public async Task<int> UpdateClientUserName(Client data)
+    {
+        var client = await _clientDataService.UpdateUserName(data);
+        return client;
+    }
+
+    public async Task<int> UpdateClientNickName(Client data)
+    {
+        var client = await _clientDataService.UpdateNickName(data);
+        return client;
+    }
+
 }
