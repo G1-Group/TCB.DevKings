@@ -2,6 +2,6 @@ namespace TCBApp.Models.Enums;
 
 public enum ClientStatus
 {
-    Enabled,
-    Disenabled
+    Enabled=1,
+    Disenabled=2
 }

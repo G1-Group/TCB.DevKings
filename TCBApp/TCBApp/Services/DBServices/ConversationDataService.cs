@@ -49,7 +49,7 @@ public class ConversationDataService : DataProvider
         return await this.ExecuteNonResult(this.insertQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p0",chat.Id ),
-            new NpgsqlParameter("@p1", chat.State),
+            new NpgsqlParameter("@p1", (int)chat.State),
             new NpgsqlParameter("@p2", chat.CreatedDate),
             new NpgsqlParameter("@p3", chat.FromId),
             new NpgsqlParameter("@p4", chat.ToId),
@@ -73,11 +73,26 @@ public class ConversationDataService : DataProvider
         var result= await this.ExecuteNonResult(updateQuery, new NpgsqlParameter[]
         {
            
-            new NpgsqlParameter("@p1", data.State),
+            new NpgsqlParameter("@p1", (int)data.State),
             new NpgsqlParameter("@p2", data.CreatedDate),
             new NpgsqlParameter("@p3", data.FromId),
             new NpgsqlParameter("@p4", data.ToId)
         });
         return await GetById(Id);
+    }
+
+
+    public async Task<ChatModel> StopConversation(long chatId)
+    {
+        var result =  GetById(chatId).Result;
+
+        if (result is not null)
+        {
+            result.State = ChatState.Closed; 
+            UpdateConversation(chatId, result);
+            return result;
+        }
+
+        return null;
     }
 }
