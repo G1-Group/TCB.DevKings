@@ -43,6 +43,8 @@ public class BoardController:ControllerBase
         {
             _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, context.Update.Message.Text).Wait();
         }
+        context.Session.Action = "GetBoarMessages";
+
     }
 
     public async  Task CreateBoard(ControllerContext context)
@@ -52,6 +54,8 @@ public class BoardController:ControllerBase
             OwnerId = context.Session.User.UserId,
             NickName = context.Update.Message.Text
         });
+        context.Session.Action = "CreateBoard";
+
     }
 
     public async Task UpdateBoard(ControllerContext context)
@@ -71,16 +75,21 @@ public class BoardController:ControllerBase
         var nickName = context.Update.Message.Text;
         var board = boardService.FindBoardByNickName(nickName);
         boardService.DeleteBoard(board.BoardId);
+        context.Session.Action = "DeleteBoard";
+
     }
 
     public async Task GetBoard(ControllerContext context)
     {
         boardService.FindBoardByNickName(context.Update.Message.Text);
+        context.Session.Action = "GetBoard";
+
     }
 
     public async Task<List<BoardModel>> GetAllBoards(ControllerContext context)
     {
         var Boards = boardService.GetBoardFromUserId(context.Session.User.UserId);
+        context.Session.Action = "GetAllBoards";
         return Boards;
     }
     
