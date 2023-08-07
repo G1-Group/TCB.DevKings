@@ -16,7 +16,8 @@ public class MessageDataService:DataProvider
     
     private string selectByIdQuery = $"SELECT * FROM {tableName} WHERE id = @p0";
     
-    string updateQuery = $"UPDATE boards SET from_id = @p1 , message = @p2,chat_id=@p3,board_id=@p4,message_type=@p6,message_status=@p5  WHERE id = @p0 ;";
+    string updateQuery =
+        $"UPDATE boards SET from_id = @p1 , message = @p2,chat_id=@p3,board_id=@p4,message_type=@p6,message_status=@p5  WHERE id = @p0 ;";
     
     private string insertQuery =
         $"INSERT INTO {tableName} (from_id,message,chat_id,board_id,message_status,message_type) VALUES ( @p1, @p2,@p3,@p4,@p5,@p6);";
@@ -56,8 +57,8 @@ public class MessageDataService:DataProvider
             new NpgsqlParameter("@p2", message._Message),
             new NpgsqlParameter("@p3", message.ChatId),
             new NpgsqlParameter("@p4", message.BoardId),
-            new NpgsqlParameter("@p5", (int)message.MessageStatus),
-            new NpgsqlParameter("@p6", (int)message.MessageType)
+            new NpgsqlParameter("@p5",(int)message.MessageType ),
+            new NpgsqlParameter("@p6", (int)message.MessageStatus)
         });
     }
 

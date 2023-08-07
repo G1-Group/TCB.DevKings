@@ -2,7 +2,7 @@ namespace TCBApp.Interface;
 
 public interface IConversationInterface
 {
-    public ChatModel CreateConversation(ChatModel chat);
+    public int CreateConversation(ChatModel chat);
     public ChatModel StopConversation(long chatId);
     public ChatModel  GetLastConversation(long chatId);
 

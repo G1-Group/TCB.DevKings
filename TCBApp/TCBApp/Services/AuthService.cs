@@ -15,6 +15,7 @@ public class AuthService:IAuthInterface
         _clientDataService = clientDataService;
     }
 
+    
     public async Task Registration(UserRegstration user)
     {
         await _userDataService.Insert(user.User);
@@ -22,7 +23,7 @@ public class AuthService:IAuthInterface
         {
             ClientId = user.TelegramChatId,
             UserId = user.User.UserId,
-            Status = ClientStatus.Disenabled,
+            Status = ClientStatus.Enabled,
             Nickname = null,
             UserName = null,
             IsPremium = false,

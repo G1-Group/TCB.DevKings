@@ -54,7 +54,7 @@ public class ClientDataService:DataProvider
             new NpgsqlParameter("@p1", client.UserId),
             new NpgsqlParameter("@p2", client.UserName),
             new NpgsqlParameter("@p3", client.Nickname),
-            new NpgsqlParameter("@p4", client.Status),
+            new NpgsqlParameter("@p4", (int)client.Status),
             new NpgsqlParameter("@p5", client.IsPremium),
         });
       
@@ -63,11 +63,10 @@ public class ClientDataService:DataProvider
     {
         await this.ExecuteNonResult(updateQuery, new NpgsqlParameter[]
         {
-            new NpgsqlParameter("@p0",client.ClientId),
             new NpgsqlParameter("@p1", client.UserId),
             new NpgsqlParameter("@p2", client.UserName),
             new NpgsqlParameter("@p3", client.Nickname),
-            new NpgsqlParameter("@p4", client.Status),
+            new NpgsqlParameter("@p4",(int)client.Status),
             new NpgsqlParameter("@p5", client.IsPremium),
         });
         return client; 

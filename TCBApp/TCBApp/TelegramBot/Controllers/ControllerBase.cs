@@ -1,7 +1,7 @@
 ﻿using TCBApp.TelegramBot;
 using Telegram.Bot;
 
-namespace TCBApp;
+namespace TCBApp.TelegramBot.Controllers;
 
 public abstract class ControllerBase
 {

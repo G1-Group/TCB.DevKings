@@ -58,7 +58,7 @@ public class BoardDataService:DataProvider
             
             new NpgsqlParameter("@p1", board.NickName),
             new NpgsqlParameter("@p2", board.OwnerId),
-            new NpgsqlParameter("@p3", board.BoardStatus),
+            new NpgsqlParameter("@p3", (int)board.BoardStatus),
            
         });
     }
