@@ -14,7 +14,12 @@ public class BoardService:IBoardInterface
     {
         return boardDataService.Insert(boardModel).Result;
     }
-    
+
+    public async Task<List<Message>> GetBoardMessages(long boardId)
+    {
+        var res = messageDataService.GetByIdFromBoard(boardId).Result;
+        return res;
+    }
     public async Task<BoardModel> CreateNewBoard(long ownerId,string nickName)
     {
         BoardModel boardModel = new BoardModel()
@@ -36,15 +41,20 @@ public class BoardService:IBoardInterface
         return boardDataService.DeleteBoard(boardId).Result;
     }
 
-    public BoardModel DeleteBoard(BoardModel boardModel)
+    public BoardModel DeleteBoard(long id)
     {
-        return boardDataService.DeleteBoard(boardModel.BoardId).Result;
+        return boardDataService.DeleteBoard(id).Result;
+    }
+
+    public List<BoardModel> GetBoardFromUserId(long userId)
+    {
+        var list = GetAllBoards();
+        return list.Where(x => x.OwnerId == userId).ToList();
     }
 
     public BoardModel UpdateBoard(long boardId,BoardModel boardModel)
     {
         return boardDataService.UpdateBoard(boardId,boardModel).Result;
-
     }
 
     public BoardModel GetBoard(long boardId)
@@ -55,6 +65,11 @@ public class BoardService:IBoardInterface
     public List<BoardModel> GetAllBoards()
     {
         return boardDataService.GetAll().Result;
+    }
+
+    public BoardModel FindBoardByNickName(string nickName)
+    {
+        return boardDataService.GetAll().Result.Find(x=>x.NickName == nickName);
     }
 }
    

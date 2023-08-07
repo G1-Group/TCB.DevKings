@@ -10,8 +10,9 @@ public interface IBoardInterface
   public Task<BoardModel> CreateNewBoard(long ownerId,string nickName);
   public Message ChangeBoardMessageStatus(long messageId,Message message);
   public BoardModel StopBoard(long boardId);
-  public BoardModel DeleteBoard(BoardModel boardModel);
+  public BoardModel DeleteBoard(long id);
   public BoardModel UpdateBoard(long boardId,BoardModel boardModel);
   public BoardModel GetBoard(long boardId);
   public List<BoardModel> GetAllBoards();
+  public BoardModel FindBoardByNickName(string nickName);
 }
