@@ -38,17 +38,30 @@ public class MessageDataService:DataProvider
     }
 
 
-    public async Task<Message?> GetById(long id)
+    public async Task<List<Message?>> GetByIdFromBoard(long id)
     {
         var reader = await this.ExecuteWithResult(this.selectByIdQuery, new NpgsqlParameter[]
         {
-            new NpgsqlParameter("@p0", id)
+            new NpgsqlParameter("@p3", id)
         });
         List<Message> result = new List<Message>();
         while (reader.Read())
             result.Add(this.ReaderDataToModel(reader));
 
-        return result.ElementAtOrDefault(0);
+        return result;
+    }
+    
+    public async Task<List<Message?>> GetByIdFromChat(long id)
+    {
+        var reader = await this.ExecuteWithResult(this.selectByIdQuery, new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p2", id)
+        });
+        List<Message> result = new List<Message>();
+        while (reader.Read())
+            result.Add(this.ReaderDataToModel(reader));
+
+        return result;
     }
 
     public async Task<int> Insert(Message message) {
