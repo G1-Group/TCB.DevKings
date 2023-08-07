@@ -38,7 +38,7 @@ public class AuthController:ControllerBase
         });
     }
 
-    public void RegstrationUserREgistration(ControllerContext context)
+    public void RegstrationUserRegistration(ControllerContext context)
     {
         _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Enter phone number as \"+998900000000\"");
 
@@ -51,7 +51,7 @@ public class AuthController:ControllerBase
         
     }
 
-    public void Regstration(ControllerContext context)
+    public void RegstrationPassword(ControllerContext context)
     {
         password = context.Update.Message.Text;
         _botClient.SendTextMessageAsync(context.Update.Message.Text, "You Succesfully registired");
@@ -70,7 +70,20 @@ public class AuthController:ControllerBase
     
     public override void HandleAction(ControllerContext context)
     {
-        if (context.Session.Action == nameof(this.LoginUserLogin))
+        if (context.Session.Action == nameof(this.RegstrationUserRegistration))
+        {
+            this.RegstrationUserRegistration(context);
+        }
+        else if(context.Session.Action==nameof(this.RegstraionUserPhoneNumber))
+        {
+            this.RegstraionUserPhoneNumber(context);
+        }
+        else if (context.Session.Action == nameof(this.RegstrationPassword))
+        {
+            this.RegstrationPassword(context);
+        }
+
+        else if (context.Session.Action == nameof(this.LoginUserLogin))
             this.LoginUserLogin(context);
         else if (context.Session.Action == nameof(this.LoginUserPassword))
             this.LoginUserPassword(context);
