@@ -83,5 +83,25 @@ public class ClientDataService:DataProvider
             IsPremium = reader.GetBoolean(5)
         };
     }
+    
+    public async Task<int> UpdateUserName(Client client)
+    {
+        return await this.ExecuteNonResult(updateQuery, new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", client.ClientId),
+            new NpgsqlParameter("@p2", client.UserName)
+        });
+        
+    }
+
+    public async Task<int> UpdateNickName(Client client)
+    {
+        return await this.ExecuteNonResult(updateQuery, new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", client.ClientId),
+            new NpgsqlParameter("@p3", client.Nickname)
+        });
+
+    }
 
 }
