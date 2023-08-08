@@ -12,4 +12,11 @@
       <PackageReference Include="Telegram.Bot" Version="19.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="TelegramBot\Controllers\ConversationController.cs" />
+      <Compile Remove="TelegramBot\Controllers\BoardController.cs" />
+      <Compile Remove="TelegramBot\Controllers\ClientController.cs" />
+      <Compile Remove="TelegramBot\Controllers\AdminController.cs" />
+    </ItemGroup>
+
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 using TCBApp.Models;
 using TCBApp.Services;
+using TCBApp.TelegramBot.Extensions;
 using Telegram.Bot;
 
 namespace TCBApp.TelegramBot.Controllers;
@@ -12,94 +13,94 @@ public class AuthController : ControllerBase
     private string login = null;
     private string phonenumber = null;
     private string password;
+    
 
-    public AuthController(ITelegramBotClient botClient, AuthService authService) : base(botClient)
+    public AuthController(AuthService authService, ControllerManager.ControllerManager controllerManager) : base(controllerManager)
     {
         _authService = authService;
     }
 
     public async Task LoginUserStart(UserControllerContext context)
     {
-        await _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Please Enter Login to Sign In");
+        await context.SendTextMessage("Please Enter Login to Sign In");
         context.Session.Action = nameof(LoginUserLogin);
     }
 
-    public async Task LoginUserLogin(UserControllerContext context)
+    private async Task LoginUserLogin(UserControllerContext context)
     {
-        login = context.Update.Message.Text;
+        login = context.Update.Message!.Text!;
 
         await _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Enter your password: ");
         context.Session.Action = nameof(LoginUserPassword);
     }
 
-    public async Task LoginUserPassword(UserControllerContext context)
+    private async Task LoginUserPassword(UserControllerContext context)
     {
         var password = context.Update.Message.Text;
-        _authService.Login(new UserRegstration
-        {
-            User = new User
+        var client = await _authService.Login(new UserLoginModel()
             {
-                PhoneNumber = login,
+                Login = login,
                 Password = password
-            },
-            TelegramChatId = context.Update.Message.Chat.Id
-        });
-        await _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, $"Login: {login}\n Password: {password}");
+            });
+        if (client is not null)
+            await context.SendTextMessage($"Client id: {client.ClientId}\n Nickname: {client.Nickname}");
+        else 
+            await context.SendTextMessage("User not found!");
 
         context.Session.Controller = null;
         context.Session.Action = null;
+
+        await context.Forward(this._controllerManager);
     }
 
-    public async Task RegstrationUserStart(UserControllerContext context)
+    public async Task RegistrationStart(UserControllerContext context)
     {
-        await _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id,
-            "Enter phone number as \"+998900000000\"");
-        context.Session.Action = "RegstrationUserStart";
+        context.Session.RegistrationModel = new UserRegistrationModel();
+        await context.SendTextMessage("Enter your phone number as \"+998900000000\"");
+        context.Session.Action = nameof(RegistrationPhoneNumber);
     }
 
-    public async Task RegstraionUserPhoneNumber(UserControllerContext context)
+    public async Task RegistrationPhoneNumber(UserControllerContext context)
     {
-        phonenumber = context.Update.Message.Text;
-        await _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Please Enter your password");
-        context.Session.Action = "RegstraionUserPhoneNumber";
+        context.Session.RegistrationModel.PhoneNumber = context.Update.Message.Text;
+        await context.SendTextMessage("Please Enter your password");
+        context.Session.Action = nameof(RegistrationPassword);
     }
 
-    public async Task RegstrationUserPassword(UserControllerContext context)
+    public async Task RegistrationPassword(UserControllerContext context)
     {
-        password = context.Update.Message.Text;
-        await _botClient.SendTextMessageAsync(context.Update.Message.Text, "You Succesfully registired");
-        _authService.Registration(new UserRegstration()
-        {
-            User = new User()
-            {
-                PhoneNumber = phonenumber,
-                Password = password,
-                TelegramClientId = context.Update.Message.Chat.Id
-            },
-            TelegramChatId = context.Update.Message.Chat.Id
-        });
-        context.Session.Action = "RegstrationUserPassword";
+        context.Session.RegistrationModel.Password = context.Update.Message.Text;
+        context.Session.RegistrationModel.ChatId = context.Session.ChatId;
+
+        await _authService.RegisterUser(context.Session.RegistrationModel);
+        
+        await context.SendTextMessage("You Succesfully registired");
+
+        context.Session.Controller = null;
+        context.Session.Action = null;
+
+        await context.Forward(this._controllerManager);
     }
 
 
-    public override async void HandleAction(UserControllerContext context)
+    protected override async Task HandleAction(UserControllerContext context)
     {
         switch (context.Session.Action)
         {
-            case nameof(RegstrationUserStart):
+            case nameof(RegistrationStart):
             {
-                await RegstrationUserStart(context);
+                await RegistrationStart(context);
                 break;
             }
-            case nameof(RegstraionUserPhoneNumber):
+            case nameof(RegistrationPhoneNumber):
             {
-                await RegstraionUserPhoneNumber(context);
+                await RegistrationPhoneNumber(context);
 
                 break;
             }
-            case nameof(RegstrationUserPassword):
+            case nameof(RegistrationPassword):
             {
-                await RegstrationUserPassword(context);
+                await RegistrationPassword(context);
 
 
                 break;
@@ -122,5 +123,10 @@ public class AuthController : ControllerBase
         }
 
         return;
+    }
+
+    protected override Task HandleUpdate(UserControllerContext context)
+    {
+        return Task.CompletedTask;
     }
 }

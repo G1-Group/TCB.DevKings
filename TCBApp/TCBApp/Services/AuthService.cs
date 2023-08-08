@@ -9,36 +9,42 @@ public class AuthService:IAuthInterface
     private UserDataService _userDataService;
     private ClientDataService _clientDataService;
 
-    public AuthService(UserDataService userDataService)
+    public AuthService(UserDataService userDataService, ClientDataService clientDataService)
     {
-        _userDataService =new UserDataService(DBConnection.connection);
-        _clientDataService = new ClientDataService(DBConnection.connection);
+        _userDataService = userDataService;
+        _clientDataService = clientDataService;
     }
 
     
-    public async Task Registration(UserRegstration user)
+    public async Task RegisterUser(UserRegistrationModel userRegistration)
     {
-        await _userDataService.Insert(user.User);
+        var insertedUser = await _userDataService.Insert(new User()
+        {
+            Password = userRegistration.Password,
+            PhoneNumber = userRegistration.PhoneNumber,
+            TelegramClientId = userRegistration.ChatId
+        });
+        if (insertedUser is null)
+            throw new Exception("Unable to insert user");
         await _clientDataService.Insert(new Client()
         {
-            ClientId = user.TelegramChatId,
-            UserId = user.User.UserId,
+            UserId = insertedUser.UserId,
             Status = ClientStatus.Enabled,
-            Nickname = null,
-            UserName = null,
+            Nickname = string.Empty,
+            UserName = string.Empty,
             IsPremium = false,
         });
     }
 
 
-    public async Task<Client> Login(UserRegstration user)
+    public async Task<Client> Login(UserLoginModel user)
     {
-        var _user = await _userDataService.GetById(user.User.UserId);
-        if (_user.Password == user.User.Password && _user.PhoneNumber == user.User.PhoneNumber)
-        {
-            return await _clientDataService.GetById(user.TelegramChatId);
-        }
+        var userInfo = await _userDataService.GetUserByLoginAndPassword(user.Login, user.Password);
 
-        throw new Exception("User not found");
+        if (userInfo is not null)
+        {
+            return await _clientDataService.GetByUserId(userInfo.UserId);
+        }
+        return null;
     }
 }

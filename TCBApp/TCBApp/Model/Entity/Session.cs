@@ -7,4 +7,5 @@ public class Session
     public string Action { get; set; }
     public string Controller { get; set; }
     public long ChatId { get; set; }
+    public UserRegistrationModel RegistrationModel { get; set; }
 }

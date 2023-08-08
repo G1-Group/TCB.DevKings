@@ -5,11 +5,20 @@ namespace TCBApp.TelegramBot.Controllers;
 
 public abstract class ControllerBase
 {
-    protected readonly ITelegramBotClient _botClient;
+    protected readonly ITelegramBotClient _botClient = TelegramBot._client;
+    protected readonly ControllerManager.ControllerManager _controllerManager;
 
-    public ControllerBase(ITelegramBotClient botClient)
+    public ControllerBase(ControllerManager.ControllerManager controllerManager)
     {
-        _botClient = botClient;
+        _controllerManager = controllerManager;
     }
-    public abstract void HandleAction(UserControllerContext context);
+    protected abstract Task HandleAction(UserControllerContext context);
+    protected abstract Task HandleUpdate(UserControllerContext context);
+
+    public async Task Handle(UserControllerContext context)
+    {
+        await this.HandleUpdate(context);
+        await this.HandleAction(context);
+    }
+
 }
