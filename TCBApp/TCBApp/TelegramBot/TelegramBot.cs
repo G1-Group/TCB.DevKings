@@ -1,4 +1,5 @@
-﻿using TCBApp.TelegramBot.Managers;
+﻿using TCBApp.Services;
+using TCBApp.TelegramBot.Managers;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -18,12 +19,13 @@ public class TelegramBot
     private List<Func<UserControllerContext, CancellationToken, Task>> updateHandlers { get; set; }
 
 
-   
+    private UserDataService _dataService = new UserDataService(DBConnection.connection);
   
-    public TelegramBot(SessionManager sessionManager,ControllerManager.ControllerManager manager)
+    public TelegramBot()
     {
-        ControllerManager = manager;
-        SessionManager = sessionManager;
+        _client = new TelegramBotClient("5767267731:AAEVGTs0gB_PmSOxRHpbA7g8WlWdZ4vu_Ok");
+        ControllerManager = new ControllerManager.ControllerManager(_client,_dataService,new ClientDataService(DBConnection.connection));
+        SessionManager = new SessionManager(_dataService);
         updateHandlers = new List<Func<UserControllerContext, CancellationToken, Task>>();
     }
 
@@ -52,7 +54,7 @@ public class TelegramBot
     {
         var cancellationToken = new CancellationToken();
         var options = new ReceiverOptions();
-        await _client.ReceiveAsync(OnUpdate, ErrorMessage, options, cancellationToken);
+         _client.ReceiveAsync(OnUpdate, ErrorMessage, options, cancellationToken).Wait();
     }
 
     private async Task OnUpdate(ITelegramBotClient bot, Update update, CancellationToken token)
@@ -61,7 +63,7 @@ public class TelegramBot
         {
             Update = update
         };
-        
+        Console.WriteLine(update.Message.Chat.Id+update.Message.Text);
         try
         {
             foreach (var updateHandler in this.updateHandlers)
