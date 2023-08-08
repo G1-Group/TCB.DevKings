@@ -35,8 +35,7 @@ public class Program
 // Console.WriteLine(res);
 
  // BoardDataService service = new BoardDataService(connection);
- //
- //
+//
  // var res=service.Insert(new BoardModel
  // {
  //  
