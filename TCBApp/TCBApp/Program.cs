@@ -30,7 +30,7 @@ public class Program
 //  ChatId = 2,
 //  BoardId = 1,
 //  MessageType = TCBApp.Models.Enums.MessageType.BoardMessage,
-//  MessageStatus = MessageStatus.NotRead
+//  MessageStatus = MessageStatus.NotRe
 // }).Result;
 // Console.WriteLine(res);
 
