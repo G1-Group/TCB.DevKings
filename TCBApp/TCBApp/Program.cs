@@ -13,6 +13,7 @@ public class Program
 
 
  //static string com = "Host=localhost; Port=5432; Database=SqlBot; username=postgres; password=Ogabek1407";
+ 
 
 
 }
@@ -29,13 +30,12 @@ public class Program
 //  ChatId = 2,
 //  BoardId = 1,
 //  MessageType = TCBApp.Models.Enums.MessageType.BoardMessage,
-//  MessageStatus = MessageStatus.NotRead
+//  MessageStatus = MessageStatus.NotRe
 // }).Result;
 // Console.WriteLine(res);
 
  // BoardDataService service = new BoardDataService(connection);
- //
- //
+//
  // var res=service.Insert(new BoardModel
  // {
  //  
