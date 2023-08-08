@@ -5,7 +5,10 @@ using TCBApp.Services;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 
- string connection = "Host=localhost; Port=5432; Database=postgres; username=postgres; password=3214";
+
+
+
+ //string connection = "Host=localhost; Port=5432; Database=postgres; username=postgres; password=3214";
 //
 //
 //  MessageDataService service = new MessageDataService(connection);

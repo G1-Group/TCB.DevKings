@@ -10,6 +10,13 @@ public class BoardService:IBoardInterface
 
     private BoardDataService boardDataService;
     private MessageDataService messageDataService;
+
+
+    public BoardService()
+    {
+        boardDataService = new BoardDataService(DBConnection.connection);
+        messageDataService = new MessageDataService(DBConnection.connection);
+    }
     public int CreateBoard(BoardModel boardModel)
     {
         return boardDataService.Insert(boardModel).Result;

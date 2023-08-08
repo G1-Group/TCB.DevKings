@@ -17,7 +17,7 @@ public class ControllerManager
     {
         _botClient = botClient;
         this._homeController = new HomeController(botClient);
-        this._authController = new AuthController(botClient, new AuthService(dataService,clientDataService));
+        this._authController = new AuthController(botClient, new AuthService(dataService));
         this.BoardController = new BoardController(botClient);
         this.ConversationController = new ConversationController(botClient);
     }

@@ -7,9 +7,9 @@ public class ConversationService:IConversationInterface
 {
     private ConversationDataService Service { get; set; }
 
-    public ConversationService(ConversationDataService conversationDataService)
+    public ConversationService()
     {
-        Service = conversationDataService;
+        Service = new ConversationDataService(DBConnection.connection);
     }
     public int CreateConversation(ChatModel chat)
     {
