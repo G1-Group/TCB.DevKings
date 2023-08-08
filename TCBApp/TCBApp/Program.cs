@@ -13,6 +13,7 @@ public class Program
 
 
  //static string com = "Host=localhost; Port=5432; Database=SqlBot; username=postgres; password=Ogabek1407";
+ 
 
 
 }
