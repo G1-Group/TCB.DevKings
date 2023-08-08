@@ -13,7 +13,7 @@ public class BoardController:ControllerBase
     {
     }
     
-    public override void HandleAction(ControllerContext context)
+    public override void HandleAction(UserControllerContext context)
     {
         if (context.Session.Action == nameof(GetBoardMessages))
             this.GetBoardMessages(context);
@@ -36,7 +36,7 @@ public class BoardController:ControllerBase
         else return;
     }
 
-    public async Task GetBoardMessages(ControllerContext context)
+    public async Task GetBoardMessages(UserControllerContext context)
     {
         var MessageList = boardService.GetBoardMessages(context.Update.Message.MessageId).Result;
         foreach (Message message in MessageList)
@@ -47,7 +47,7 @@ public class BoardController:ControllerBase
 
     }
 
-    public async  Task CreateBoard(ControllerContext context)
+    public async  Task CreateBoard(UserControllerContext context)
     {
         boardService.CreateBoard(new BoardModel()
         {
@@ -58,7 +58,7 @@ public class BoardController:ControllerBase
 
     }
 
-    public async Task UpdateBoard(ControllerContext context)
+    public async Task UpdateBoard(UserControllerContext context)
     {
         var Boards = boardService.GetBoardFromUserId(context.Session.User.UserId);
         var nickName = context.Update.Message.Text;
@@ -69,24 +69,24 @@ public class BoardController:ControllerBase
         }
     }
     
-    public async Task DeleteBoard(ControllerContext context)
+    public async Task DeleteBoard(UserControllerContext context)
     {
         var Boards = boardService.GetBoardFromUserId(context.Session.User.UserId);
         var nickName = context.Update.Message.Text;
         var board = boardService.FindBoardByNickName(nickName);
-        boardService.DeleteBoard(board.BoardId);
+        boardService.DeleteBoard(board.Result.BoardId);
         context.Session.Action = "DeleteBoard";
 
     }
 
-    public async Task GetBoard(ControllerContext context)
+    public async Task GetBoard(UserControllerContext context)
     {
         boardService.FindBoardByNickName(context.Update.Message.Text);
         context.Session.Action = "GetBoard";
 
     }
 
-    public async Task<List<BoardModel>> GetAllBoards(ControllerContext context)
+    public async Task<List<BoardModel>> GetAllBoards(UserControllerContext context)
     {
         var Boards = boardService.GetBoardFromUserId(context.Session.User.UserId);
         context.Session.Action = "GetAllBoards";

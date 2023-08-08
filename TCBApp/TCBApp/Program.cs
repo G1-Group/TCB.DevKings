@@ -1,14 +1,27 @@
 ﻿using System.Threading.Channels;
+using System.Xml.Serialization;
 using TCBApp.Models;
 using TCBApp.Models.Enums;
 using TCBApp.Services;
+using TCBApp.TelegramBot;
+using TCBApp.TelegramBot.Controllers;
+using Telegram.Bot;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
+public class Program
+{
 
+
+ //static string com = "Host=localhost; Port=5432; Database=SqlBot; username=postgres; password=Ogabek1407";
+ 
+
+
+}
 
 
 
  //string connection = "Host=localhost; Port=5432; Database=postgres; username=postgres; password=3214";
+
 //
 //
 //  MessageDataService service = new MessageDataService(connection);
@@ -20,13 +33,12 @@ using MessageType = Telegram.Bot.Types.Enums.MessageType;
 //  ChatId = 2,
 //  BoardId = 1,
 //  MessageType = TCBApp.Models.Enums.MessageType.BoardMessage,
-//  MessageStatus = MessageStatus.NotRead
+//  MessageStatus = MessageStatus.NotRe
 // }).Result;
 // Console.WriteLine(res);
 
  // BoardDataService service = new BoardDataService(connection);
- //
- //
+//
  // var res=service.Insert(new BoardModel
  // {
  //  

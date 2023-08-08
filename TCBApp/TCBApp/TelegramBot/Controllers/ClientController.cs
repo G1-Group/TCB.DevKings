@@ -16,7 +16,7 @@ public class ClientController:ControllerBase
     }
 
     
-    public void ClientUpdateUserName(ControllerContext context)
+    public void ClientUpdateUserName(UserControllerContext context)
     {
         userName = context.Update.Message.Text;
         _clientService.UpdateClientUserName(new Client()
@@ -28,7 +28,7 @@ public class ClientController:ControllerBase
 
     }
 
-    public void ClientUpdateNickName(ControllerContext context)
+    public void ClientUpdateNickName(UserControllerContext context)
     {
         nickName = context.Update.Message.Text;
         _clientService.UpdateClientNickName(new Client()
@@ -40,7 +40,7 @@ public class ClientController:ControllerBase
         context.Session.Action = "UpdateClientNickname";
 
     }
-    public override void HandleAction(ControllerContext context)
+    public override void HandleAction(UserControllerContext context)
     {
         if (context.Session.Action==nameof(ClientUpdateUserName))
         {

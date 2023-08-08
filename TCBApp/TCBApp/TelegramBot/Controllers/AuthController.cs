@@ -16,7 +16,7 @@ public class AuthController:ControllerBase
     {
         _authService = authService;
     }
-    public void LoginUserLogin(ControllerContext context)
+    public void LoginUserLogin(UserControllerContext context)
     {
         login = context.Update.Message.Text;
 
@@ -24,7 +24,7 @@ public class AuthController:ControllerBase
         context.Session.Action = "LoginUserLogin";
     }
 
-    public void LoginUserPassword(ControllerContext context)
+    public void LoginUserPassword(UserControllerContext context)
     {
         var password = context.Update.Message.Text;
         _authService.Login(new UserRegstration
@@ -40,14 +40,14 @@ public class AuthController:ControllerBase
        
     }
 
-    public void RegstrationUserRegistration(ControllerContext context)
+    public void RegstrationUserRegistration(UserControllerContext context)
     {
         _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Enter phone number as \"+998900000000\"");
         context.Session.Action = "RegstrationUserRegistration";
 
     }
 
-    public void RegstraionUserPhoneNumber(ControllerContext context)
+    public void RegstraionUserPhoneNumber(UserControllerContext context)
     {
         phonenumber = context.Update.Message.Text;
         _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Please Enter your password");
@@ -55,7 +55,7 @@ public class AuthController:ControllerBase
 
     }
 
-    public void RegstrationPassword(ControllerContext context)
+    public void RegstrationPassword(UserControllerContext context)
     {
         password = context.Update.Message.Text;
         _botClient.SendTextMessageAsync(context.Update.Message.Text, "You Succesfully registired");
@@ -73,7 +73,7 @@ public class AuthController:ControllerBase
     }
 
     
-    public override void HandleAction(ControllerContext context)
+    public override void HandleAction(UserControllerContext context)
     {
         if (context.Session.Action == nameof(this.RegstrationUserRegistration))
         {

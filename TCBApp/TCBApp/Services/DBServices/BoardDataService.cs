@@ -32,7 +32,7 @@ public class BoardDataService:DataProvider
         var reader = await this.ExecuteWithResult(this.selectQuery, null);
         List<BoardModel> result = new List<BoardModel>();
         while (reader.Read())
-            result.Add(this.ReaderDataToModel(reader));
+            result.Add(this.ReaderDataToModel(reader).Result);
 
         return result;
     }
@@ -46,7 +46,7 @@ public class BoardDataService:DataProvider
         });
         List<BoardModel> result = new List<BoardModel>();
         while (reader.Read())
-            result.Add(this.ReaderDataToModel(reader));
+            result.Add(this.ReaderDataToModel(reader).Result);
 
         return result.ElementAtOrDefault(0);
     }
@@ -63,7 +63,7 @@ public class BoardDataService:DataProvider
         });
     }
 
-    private BoardModel ReaderDataToModel(NpgsqlDataReader reader)
+    private async Task <BoardModel> ReaderDataToModel(NpgsqlDataReader reader)
     {
         return new BoardModel()
         {
@@ -93,7 +93,7 @@ public class BoardDataService:DataProvider
         });
         List<BoardModel> boards = new List<BoardModel>();
         while (reader.Read())
-            boards.Add(ReaderDataToModel(reader));
+            boards.Add(ReaderDataToModel(reader).Result);
         return boards.FirstOrDefault();
 
     }

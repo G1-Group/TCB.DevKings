@@ -11,15 +11,17 @@ public class BoardService:IBoardInterface
     private BoardDataService boardDataService;
     private MessageDataService messageDataService;
 
-
     public BoardService()
     {
         boardDataService = new BoardDataService(DBConnection.connection);
         messageDataService = new MessageDataService(DBConnection.connection);
     }
     public int CreateBoard(BoardModel boardModel)
+
+    public Task<int> CreateBoard(BoardModel boardModel)
+
     {
-        return boardDataService.Insert(boardModel).Result;
+        return  boardDataService.Insert(boardModel);
     }
 
     public async Task<List<Message>> GetBoardMessages(long boardId)
@@ -38,17 +40,17 @@ public class BoardService:IBoardInterface
          throw new Exception("Error CreateNewBoard@ ");
     }
     
-    public Message ChangeBoardMessageStatus(long messageId,Message message)
+    public async Task<Message>ChangeBoardMessageStatus(long messageId,Message message)
     {
         return messageDataService.UpdateMessage(messageId, message).Result;
     }
 
-    public BoardModel StopBoard(long boardId)
+    public async Task<BoardModel> StopBoard(long boardId)
     {
         return boardDataService.DeleteBoard(boardId).Result;
     }
 
-    public BoardModel DeleteBoard(long id)
+    public async Task<BoardModel> DeleteBoard(long id)
     {
         return boardDataService.DeleteBoard(id).Result;
     }
@@ -56,27 +58,27 @@ public class BoardService:IBoardInterface
     public List<BoardModel> GetBoardFromUserId(long userId)
     {
         var list = GetAllBoards();
-        return list.Where(x => x.OwnerId == userId).ToList();
+        return list.Result.Where(x => x.OwnerId == userId).ToList();
     }
 
-    public BoardModel UpdateBoard(long boardId,BoardModel boardModel)
+    public async Task<BoardModel> UpdateBoard(long boardId,BoardModel boardModel)
     {
         return boardDataService.UpdateBoard(boardId,boardModel).Result;
     }
 
-    public BoardModel GetBoard(long boardId)
+    public async Task<BoardModel> GetBoard(long boardId)
     {
         return boardDataService.GetById(boardId).Result;
     }
 
-    public List<BoardModel> GetAllBoards()
+    public async Task<List<BoardModel>> GetAllBoards()
     {
         return boardDataService.GetAll().Result;
     }
 
-    public BoardModel FindBoardByNickName(string nickName)
+    public async Task<BoardModel> FindBoardByNickName(string nickName)
     {
-        return boardDataService.GetAll().Result.Find(x=>x.NickName == nickName);
+        return  boardDataService.GetAll().Result.Find(x=>x.NickName == nickName);
     }
 }
    

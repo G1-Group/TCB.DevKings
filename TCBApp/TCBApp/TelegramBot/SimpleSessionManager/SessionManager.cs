@@ -15,20 +15,15 @@ public class SessionManager : ISessionManager<Session>
 
     public async Task<Session> GetSessionByChatId(long chatId)
     {
-        var user = await _userDataService.GetUserByChatId(chatId);
-        if (user is null)
-            throw new Exception("User not found");
-
-
-        var lastSession = sessions.FindLast(x => x.User.UserId == user.UserId);
+        var lastSession = sessions.FindLast(x => x.ChatId == chatId);
         if (lastSession is null)
         {
             var session = new Session()
             {
-                User = user,
                 Action = null,
                 Controller = null,
-                Id = 0
+                Id = 0,
+                ChatId = chatId
             };
             sessions.Add(session);
             return session;
