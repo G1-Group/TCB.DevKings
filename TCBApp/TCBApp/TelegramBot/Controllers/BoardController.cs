@@ -74,7 +74,7 @@ public class BoardController:ControllerBase
         var Boards = boardService.GetBoardFromUserId(context.Session.User.UserId);
         var nickName = context.Update.Message.Text;
         var board = boardService.FindBoardByNickName(nickName);
-        boardService.DeleteBoard(board.BoardId);
+        boardService.DeleteBoard(board.Result.BoardId);
         context.Session.Action = "DeleteBoard";
 
     }

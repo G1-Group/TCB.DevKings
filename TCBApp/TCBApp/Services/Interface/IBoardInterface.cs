@@ -6,13 +6,13 @@ namespace TCBApp.Interface;
 
 public interface IBoardInterface
 {
-  public int CreateBoard(BoardModel boardModel);
+  public Task<int> CreateBoard(BoardModel boardModel);
   public Task<BoardModel> CreateNewBoard(long ownerId,string nickName);
-  public Message ChangeBoardMessageStatus(long messageId,Message message);
-  public BoardModel StopBoard(long boardId);
-  public BoardModel DeleteBoard(long id);
-  public BoardModel UpdateBoard(long boardId,BoardModel boardModel);
-  public BoardModel GetBoard(long boardId);
-  public List<BoardModel> GetAllBoards();
-  public BoardModel FindBoardByNickName(string nickName);
+  public Task<Message> ChangeBoardMessageStatus(long messageId,Message message);
+  public Task<BoardModel> StopBoard(long boardId);
+  public Task<BoardModel> DeleteBoard(long id);
+  public Task<BoardModel> UpdateBoard(long boardId,BoardModel boardModel);
+  public Task<BoardModel> GetBoard(long boardId);
+  public Task<List<BoardModel>> GetAllBoards();
+  public Task<BoardModel> FindBoardByNickName(string nickName);
 }
