@@ -10,7 +10,10 @@ using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 public class Program
 {
-
+ public static void Main(string[] args)
+ {
+  
+ }
 
  //static string com = "Host=localhost; Port=5432; Database=SqlBot; username=postgres; password=Ogabek1407";
  

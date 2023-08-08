@@ -1,64 +1,73 @@
-﻿using TCBApp.Models;
+﻿using System.Reflection.Metadata.Ecma335;
+using TCBApp.Models;
 using TCBApp.Services;
 using Telegram.Bot;
 
 namespace TCBApp.TelegramBot.Controllers;
 
-public class AuthController:ControllerBase
+public class AuthController : ControllerBase
 {
     private readonly AuthService _authService;
- 
+
     private string login = null;
     private string phonenumber = null;
     private string password;
 
-    public AuthController(ITelegramBotClient botClient, AuthService authService): base(botClient)
+    public AuthController(ITelegramBotClient botClient, AuthService authService) : base(botClient)
     {
         _authService = authService;
     }
-    public void LoginUserLogin(UserControllerContext context)
+
+    public async Task LoginUserStart(UserControllerContext context)
+    {
+        await _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Please Enter Login to Sign In");
+        context.Session.Action = nameof(LoginUserLogin);
+    }
+
+    public async Task LoginUserLogin(UserControllerContext context)
     {
         login = context.Update.Message.Text;
 
-        _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Enter your password: ").Wait();
-        context.Session.Action = "LoginUserLogin";
+        await _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Enter your password: ");
+        context.Session.Action = nameof(LoginUserPassword);
     }
 
-    public void LoginUserPassword(UserControllerContext context)
+    public async Task LoginUserPassword(UserControllerContext context)
     {
         var password = context.Update.Message.Text;
         _authService.Login(new UserRegstration
         {
-            User =new User
+            User = new User
             {
                 PhoneNumber = login,
-                Password =password
+                Password = password
             },
-            TelegramChatId =context.Update.Message.Chat.Id 
+            TelegramChatId = context.Update.Message.Chat.Id
         });
-        context.Session.Action = "LoginUserPassword";
-       
+        await _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, $"Login: {login}\n Password: {password}");
+
+        context.Session.Controller = null;
+        context.Session.Action = null;
     }
 
-    public void RegstrationUserRegistration(UserControllerContext context)
+    public async Task RegstrationUserStart(UserControllerContext context)
     {
-        _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Enter phone number as \"+998900000000\"");
-        context.Session.Action = "RegstrationUserRegistration";
-
+        await _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id,
+            "Enter phone number as \"+998900000000\"");
+        context.Session.Action = "RegstrationUserStart";
     }
 
-    public void RegstraionUserPhoneNumber(UserControllerContext context)
+    public async Task RegstraionUserPhoneNumber(UserControllerContext context)
     {
         phonenumber = context.Update.Message.Text;
-        _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Please Enter your password");
+        await _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Please Enter your password");
         context.Session.Action = "RegstraionUserPhoneNumber";
-
     }
 
-    public void RegstrationPassword(UserControllerContext context)
+    public async Task RegstrationUserPassword(UserControllerContext context)
     {
         password = context.Update.Message.Text;
-        _botClient.SendTextMessageAsync(context.Update.Message.Text, "You Succesfully registired");
+        await _botClient.SendTextMessageAsync(context.Update.Message.Text, "You Succesfully registired");
         _authService.Registration(new UserRegstration()
         {
             User = new User()
@@ -69,28 +78,49 @@ public class AuthController:ControllerBase
             },
             TelegramChatId = context.Update.Message.Chat.Id
         });
-        context.Session.Action = "RegstrationPassword";
+        context.Session.Action = "RegstrationUserPassword";
     }
 
-    
-    public override void HandleAction(UserControllerContext context)
+
+    public override async void HandleAction(UserControllerContext context)
     {
-        if (context.Session.Action == nameof(this.RegstrationUserRegistration))
+        switch (context.Session.Action)
         {
-            this.RegstrationUserRegistration(context);
-        }
-        else if(context.Session.Action==nameof(this.RegstraionUserPhoneNumber))
-        {
-            this.RegstraionUserPhoneNumber(context);
-        }
-        else if (context.Session.Action == nameof(this.RegstrationPassword))
-        {
-            this.RegstrationPassword(context);
+            case nameof(RegstrationUserStart):
+            {
+                await RegstrationUserStart(context);
+                break;
+            }
+            case nameof(RegstraionUserPhoneNumber):
+            {
+                await RegstraionUserPhoneNumber(context);
+
+                break;
+            }
+            case nameof(RegstrationUserPassword):
+            {
+                await RegstrationUserPassword(context);
+
+
+                break;
+            }
+            case nameof(LoginUserStart):
+            {
+                await LoginUserStart(context);
+                break;
+            }
+            case nameof(LoginUserLogin):
+            {
+                await LoginUserLogin(context);
+                break;
+            }
+            case nameof(LoginUserPassword):
+            {
+                await LoginUserPassword(context);
+                break;
+            }
         }
 
-        else if (context.Session.Action == nameof(this.LoginUserLogin))
-            this.LoginUserLogin(context);
-        else if (context.Session.Action == nameof(this.LoginUserPassword))
-            this.LoginUserPassword(context);
+        return;
     }
 }

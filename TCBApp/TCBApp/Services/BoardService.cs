@@ -16,7 +16,7 @@ public class BoardService:IBoardInterface
         boardDataService = new BoardDataService(DBConnection.connection);
         messageDataService = new MessageDataService(DBConnection.connection);
     }
-    public int CreateBoard(BoardModel boardModel)
+ 
 
     public Task<int> CreateBoard(BoardModel boardModel)
 
