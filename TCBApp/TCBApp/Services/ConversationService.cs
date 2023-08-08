@@ -9,7 +9,7 @@ public class ConversationService:IConversationInterface
 
     public ConversationService()
     {
-        Service = new ConversationDataService(DBConnection.connection);
+        // Service = new ConversationDataService(DBConnection.connection);
     }
     public int CreateConversation(ChatModel chat)
     {

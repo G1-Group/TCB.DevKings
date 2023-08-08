@@ -6,7 +6,7 @@ namespace TCBApp.TelegramBot.Managers;
 public class SessionManager : ISessionManager<Session>
 {
     private readonly UserDataService _userDataService;
-    private List<Session> sessions => new List<Session>();
+    private List<Session> sessions = new List<Session>();
 
     public SessionManager(UserDataService userDataService)
     {
@@ -15,7 +15,7 @@ public class SessionManager : ISessionManager<Session>
 
     public async Task<Session> GetSessionByChatId(long chatId)
     {
-        var lastSession = sessions.FindLast(x => x.ChatId == chatId);
+        var lastSession = sessions.Find(x => x.ChatId == chatId);
         if (lastSession is null)
         {
             var session = new Session()

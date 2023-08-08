@@ -13,8 +13,8 @@ public class BoardService:IBoardInterface
 
     public BoardService()
     {
-        boardDataService = new BoardDataService(DBConnection.connection);
-        messageDataService = new MessageDataService(DBConnection.connection);
+        // boardDataService = new BoardDataService(DBConnection.connection);
+        // messageDataService = new MessageDataService(DBConnection.connection);
     }
  
 

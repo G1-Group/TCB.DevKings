@@ -1,27 +1,18 @@
-﻿using System.Data.Common;
-using System.Threading.Channels;
+﻿using System.Threading.Channels;
 using System.Xml.Serialization;
-using TCBApp;
 using TCBApp.Models;
 using TCBApp.Models.Enums;
 using TCBApp.Services;
 using TCBApp.TelegramBot;
-using TCBApp.TelegramBot.ControllerManager;
 using TCBApp.TelegramBot.Controllers;
-using TCBApp.TelegramBot.Managers;
 using Telegram.Bot;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 public class Program
 {
- public static void Main(string[] args)
+ public static async Task Main(string[] args)
  {
-
-
-  TelegramBot telegramBot = new TelegramBot();
-  telegramBot.Start();
-  Console.ReadKey();
-
+   await new TelegramBot().Start();
  }
 
  //static string com = "Host=localhost; Port=5432; Database=SqlBot; username=postgres; password=Ogabek1407";

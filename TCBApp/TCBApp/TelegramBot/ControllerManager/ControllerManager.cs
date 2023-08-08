@@ -7,32 +7,30 @@ namespace TCBApp.TelegramBot.ControllerManager;
 
 public class ControllerManager
 {
-    
-    private readonly ITelegramBotClient _botClient;
     private AuthController _authController;
     private HomeController _homeController;
-    private BoardController BoardController;
-    private ConversationController ConversationController;
-    public ControllerManager(ITelegramBotClient botClient,UserDataService dataService,ClientDataService clientDataService)
+    // private BoardController BoardController;
+    // private ConversationController ConversationController;
+    public ControllerManager(UserDataService dataService, ClientDataService clientDataService, AuthService authService)
     {
-        _botClient = botClient;
-        this._homeController = new HomeController(botClient);
-        this._authController = new AuthController(botClient, new AuthService(dataService));
-        this.BoardController = new BoardController(botClient);
-        this.ConversationController = new ConversationController(botClient);
+        this._homeController = new HomeController(this);
+        this._authController = new AuthController(authService, this);
+        // this._authController = new AuthController(botClient, new AuthService(dataService));
+        // this.BoardController = new BoardController(botClient);
+        // this.ConversationController = new ConversationController(botClient);
     }
 
     public ControllerBase GetControllerBySessionData(Session session)
     {
-        if (session.Controller == nameof(AuthController))
-            return this._authController;
-        else if (session.Controller==nameof(BoardController))
-            return BoardController;
-        else if(session.Controller==nameof(ConversationController))
+        switch (session.Controller)
         {
-            return ConversationController;
+            case nameof(HomeController):
+                return this._homeController;
+            case nameof(AuthController):
+                return this._authController;
         }
-            return this.DefaultController;
+        
+        return this.DefaultController;
     }
 
     public ControllerBase DefaultController => this._homeController;

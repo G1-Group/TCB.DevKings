@@ -27,6 +27,9 @@ public class DataProvider
         if (parameters is not null)
             command.Parameters.AddRange(parameters);
 
+        var paramsStr = string.Join(", ", command.Parameters.Select(x => $"{x.ParameterName} = {x.Value ?? "[NULL]"}"));
+        Console.WriteLine("{1} | DB Query: {0}", command.CommandText + "\n" + paramsStr, DateTime.Now);
+
         var reader = await command.ExecuteReaderAsync();
 
         return reader;

@@ -1,4 +1,5 @@
 ﻿using TCBApp.Services;
+using TCBApp.TelegramBot.Extensions;
 using TCBApp.TelegramBot.Managers;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -9,23 +10,27 @@ namespace TCBApp.TelegramBot;
 
 public class TelegramBot
 {
-    private TelegramBotClient _client { get; set; }
+    private readonly ClientDataService _clientDataService;
+    private readonly UserDataService _userDataService;
+    private readonly AuthService _authService;
+    public static TelegramBotClient _client { get; set; }
 
     private SessionManager SessionManager { get; set; }
-    private ControllerManager.ControllerManager ControllerManager { get; set; } 
-
-    public delegate Task UpdateHandlerDelegate(ITelegramBotClient bot, Update update, CancellationToken cancellationToken);
-
+    private ControllerManager.ControllerManager ControllerManager { get; set; }
     private List<Func<UserControllerContext, CancellationToken, Task>> updateHandlers { get; set; }
-
-
-    private UserDataService _dataService = new UserDataService(DBConnection.connection);
+    
   
     public TelegramBot()
     {
-        _client = new TelegramBotClient("5767267731:AAEVGTs0gB_PmSOxRHpbA7g8WlWdZ4vu_Ok");
-        ControllerManager = new ControllerManager.ControllerManager(_client,_dataService,new ClientDataService(DBConnection.connection));
-        SessionManager = new SessionManager(_dataService);
+        _client = new TelegramBotClient(Settings.botToken);
+        
+        _userDataService = new UserDataService(Settings.dbConnectionString);
+        _clientDataService = new ClientDataService(Settings.dbConnectionString);
+        _authService = new AuthService(_userDataService, _clientDataService);
+        
+        ControllerManager = new ControllerManager.ControllerManager(_userDataService, _clientDataService, _authService);
+        SessionManager = new SessionManager(_userDataService);
+        
         updateHandlers = new List<Func<UserControllerContext, CancellationToken, Task>>();
     }
 
@@ -47,6 +52,12 @@ public class TelegramBot
             Console.WriteLine("Log -> {0} | {1} | {2}", DateTime.Now, context.Session.ChatId, context.Update.Message?.Text ?? context.Update.Message?.Caption);
         });
         
+        
+        this.updateHandlers.Insert(this.updateHandlers.Count, async (context, token) =>
+        {
+            await context.Forward(this.ControllerManager);
+        });
+        
         await StartReceiver();
     }
 
@@ -54,7 +65,10 @@ public class TelegramBot
     {
         var cancellationToken = new CancellationToken();
         var options = new ReceiverOptions();
-         _client.ReceiveAsync(OnUpdate, ErrorMessage, options, cancellationToken).Wait();
+        _client.StartReceiving(OnUpdate, ErrorMessage, options, cancellationToken);
+
+        Console.WriteLine("{0} | Bot is starting...", DateTime.Now);
+        Console.ReadKey();
     }
 
     private async Task OnUpdate(ITelegramBotClient bot, Update update, CancellationToken token)
@@ -63,7 +77,7 @@ public class TelegramBot
         {
             Update = update
         };
-        Console.WriteLine(update.Message.Chat.Id+update.Message.Text);
+        
         try
         {
             foreach (var updateHandler in this.updateHandlers)
