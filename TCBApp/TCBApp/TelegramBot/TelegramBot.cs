@@ -15,7 +15,7 @@ public class TelegramBot
 
     public delegate Task UpdateHandlerDelegate(ITelegramBotClient bot, Update update, CancellationToken cancellationToken);
 
-    private List<Func<ControllerContext, CancellationToken, Task>> updateHandlers { get; set; }
+    private List<Func<UserControllerContext, CancellationToken, Task>> updateHandlers { get; set; }
 
 
    
@@ -24,7 +24,7 @@ public class TelegramBot
     {
         ControllerManager = manager;
         SessionManager = sessionManager;
-        updateHandlers = new List<Func<ControllerContext, CancellationToken, Task>>();
+        updateHandlers = new List<Func<UserControllerContext, CancellationToken, Task>>();
     }
 
     public async Task Start()
@@ -57,7 +57,7 @@ public class TelegramBot
 
     private async Task OnUpdate(ITelegramBotClient bot, Update update, CancellationToken token)
     {
-        ControllerContext context = new ControllerContext()
+        UserControllerContext context = new UserControllerContext()
         {
             Update = update
         };

@@ -8,7 +8,7 @@ public class ConversationController:ControllerBase
     {
     }
 
-    public override void HandleAction(ControllerContext context)
+    public override void HandleAction(UserControllerContext context)
     {
         throw new NotImplementedException();
     }
