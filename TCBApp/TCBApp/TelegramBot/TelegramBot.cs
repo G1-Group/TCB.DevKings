@@ -18,7 +18,7 @@ public class TelegramBot
     private List<Func<ControllerContext, CancellationToken, Task>> updateHandlers { get; set; }
 
 
-    private KeyboardButton KeyboardButton;
+   
   
     public TelegramBot(SessionManager sessionManager,ControllerManager.ControllerManager manager)
     {
