@@ -7,9 +7,9 @@ public class ClientService: IClientService
 {
     private ClientDataService _clientDataService;
 
-    public ClientService(ClientDataService clientDataService)
+    public ClientService()
     {
-        _clientDataService = clientDataService;
+        _clientDataService = new ClientDataService(DBConnection.connection);
     }
 
     public async Task<Client?> CreateClient(Client data)

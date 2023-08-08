@@ -9,10 +9,10 @@ public class AuthService:IAuthInterface
     private UserDataService _userDataService;
     private ClientDataService _clientDataService;
 
-    public AuthService(UserDataService userDataService,ClientDataService clientDataService)
+    public AuthService(UserDataService userDataService)
     {
-        _userDataService = userDataService;
-        _clientDataService = clientDataService;
+        _userDataService =new UserDataService(DBConnection.connection);
+        _clientDataService = new ClientDataService(DBConnection.connection);
     }
 
     
