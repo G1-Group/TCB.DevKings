@@ -10,7 +10,7 @@ public class AdminController:ControllerBase
     {
     }
 
-    public override void HandleAction(ControllerContext context)
+    public override void HandleAction(UserControllerContext context)
     {
     }
     

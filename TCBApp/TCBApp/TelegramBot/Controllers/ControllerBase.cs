@@ -11,5 +11,5 @@ public abstract class ControllerBase
     {
         _botClient = botClient;
     }
-    public abstract void HandleAction(ControllerContext context);
+    public abstract void HandleAction(UserControllerContext context);
 }
