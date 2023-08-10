@@ -9,4 +9,5 @@ public class Session
     public long ChatId { get; set; }
     public long? ClientId { get; set; }
     public UserRegistrationModel RegistrationModel { get; set; }
+    public BoardSessionModel BoardData{ get; set; }
 }

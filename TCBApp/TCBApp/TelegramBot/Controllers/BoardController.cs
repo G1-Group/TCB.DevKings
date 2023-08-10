@@ -1,96 +1,113 @@
 ﻿using TCBApp.Models;
+using TCBApp.Models.Enums;
 using TCBApp.Services;
-using Telegram.Bot;
-using Telegram.Bot.Types;
-using Message = TCBApp.Models.Message;
+using TCBApp.TelegramBot.Extensions;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
+using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 namespace TCBApp.TelegramBot.Controllers;
 
 public class BoardController:ControllerBase
 {
-    private BoardService boardService;
-    public BoardController(ITelegramBotClient botClient) : base(botClient)
+    private readonly BoardService _boardService;
+    private readonly BoardDataService _boardDataService;
+
+    public BoardController(ControllerManager.ControllerManager controllerManager, BoardService boardService) : base(controllerManager)
     {
+        _boardService = boardService;
+        _boardDataService = boardService.boardDataService;
+    }
+    public async Task MyBoards(UserControllerContext context)
+    {
+        var allBoards = await _boardDataService.GetAllByOwnerId(context.Session.ClientId.Value);
+
+        if (allBoards.Count == 0)
+        {
+            context.Session.Action = nameof(Index);
+            await context.SendBoldTextMessage("Sizda hali boardlar mavjud emas!", replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
+            return;
+        }
+        
+        string message = $"All boards count: {allBoards.Count};\n";
+        
+        message += string.Join(
+            "\n",
+            allBoards.Select(board => $"{board.BoardId} | {board.NickName} | {board.BoardStatus};")
+        );
+
+        await context.SendTextMessage($"<code>{message}</code>", parseMode: ParseMode.Html, replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
+        
     }
     
-    public override void HandleAction(UserControllerContext context)
+    public async Task Index(UserControllerContext context)
     {
-        if (context.Session.Action == nameof(GetBoardMessages))
-            this.GetBoardMessages(context);
-        
-        else if(context.Session.Action == nameof(CreateBoard))
-            this.CreateBoard(context);
-        
-        else if (context.Session.Action == nameof(DeleteBoard))
-            this.DeleteBoard(context);
-        
-        else if (context.Session.Action == nameof(UpdateBoard))
-            this.UpdateBoard(context);
-
-        else if (context.Session.Action == nameof(GetBoard))
-            this.GetBoard(context);
-        
-        else if (context.Session.Action == nameof(GetAllBoards))
-            this.GetAllBoards(context);
-        
-        else return;
+        await context.SendBoldTextMessage("Your boards", replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
     }
 
-    public async Task GetBoardMessages(UserControllerContext context)
+    public async Task CreateBoardStart(UserControllerContext context)
     {
-        var MessageList = boardService.GetBoardMessages(context.Update.Message.MessageId).Result;
-        foreach (Message message in MessageList)
+        context.Session.BoardData = new BoardSessionModel();
+        context.Session.Action = nameof(CreateBoardNickname);
+        await context.SendTextMessage("Enter nickname for new board: ", replyMarkup: new ReplyKeyboardRemove());
+    }
+
+    public async Task CreateBoardNickname(UserControllerContext context)
+    {
+        context.Session.BoardData.NewBoardNickName = message.Text;
+        if (string.IsNullOrEmpty(context.Session.BoardData.NewBoardNickName))
         {
-            _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, context.Update.Message.Text).Wait();
+            await context.SendErrorMessage("Boardning nomi bo'sh bo'lmaydi", code: 400);
+            return;
         }
-        context.Session.Action = "GetBoarMessages";
-
-    }
-
-    public async  Task CreateBoard(UserControllerContext context)
-    {
-        boardService.CreateBoard(new BoardModel()
+        await _boardService.CreateBoard(new BoardModel()
         {
-            OwnerId = context.Session.User.UserId,
-            NickName = context.Update.Message.Text
+            BoardStatus = BoardStatus.New,
+            NickName = context.Session.BoardData.NewBoardNickName,
+            OwnerId = context.Session.ClientId!.Value
         });
-        context.Session.Action = "CreateBoard";
 
+        context.Session.BoardData = null;
+        context.Session.Action = nameof(Index);
+        await context.SendBoldTextMessage("Board successfully created!", replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
     }
 
-    public async Task UpdateBoard(UserControllerContext context)
+
+    protected override async Task HandleAction(UserControllerContext context)
     {
-        var Boards = boardService.GetBoardFromUserId(context.Session.User.UserId);
-        var nickName = context.Update.Message.Text;
-        var board = boardService.FindBoardByNickName(nickName);
-        if (board is not null)
+        switch (context.Session.Action)
         {
-            _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Create new NickName ").Wait();
+            case nameof(Index):
+                await this.Index(context);
+                break;
+            case nameof(MyBoards):
+                await this.MyBoards(context);
+                break;
+            case nameof(CreateBoardStart):
+                await this.CreateBoardStart(context);
+                break;
+            case nameof(CreateBoardNickname):
+                await this.CreateBoardNickname(context);
+                break;
         }
     }
     
-    public async Task DeleteBoard(UserControllerContext context)
+    protected override async Task HandleUpdate(UserControllerContext context)
     {
-        var Boards = boardService.GetBoardFromUserId(context.Session.User.UserId);
-        var nickName = context.Update.Message.Text;
-        var board = boardService.FindBoardByNickName(nickName);
-        boardService.DeleteBoard(board.Result.BoardId);
-        context.Session.Action = "DeleteBoard";
-
+        if (message.Type is MessageType.Text)
+        {
+            if (message.Text == "Back")
+            {
+                context.Session.Controller = nameof(ClientDashboardController);
+                context.Session.Action = nameof(ClientDashboardController.Index);
+                return;
+            }
+            context.Session.Action = message.Text switch
+            {
+                "My boards" => nameof(this.MyBoards),
+                "Create" => nameof(this.CreateBoardStart),
+                _ => context.Session.Action
+            };
+        }
     }
-
-    public async Task GetBoard(UserControllerContext context)
-    {
-        boardService.FindBoardByNickName(context.Update.Message.Text);
-        context.Session.Action = "GetBoard";
-
-    }
-
-    public async Task<List<BoardModel>> GetAllBoards(UserControllerContext context)
-    {
-        var Boards = boardService.GetBoardFromUserId(context.Session.User.UserId);
-        context.Session.Action = "GetAllBoards";
-        return Boards;
-    }
-    
 }

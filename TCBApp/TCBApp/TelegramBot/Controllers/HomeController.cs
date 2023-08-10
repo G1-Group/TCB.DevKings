@@ -7,58 +7,58 @@ namespace TCBApp.TelegramBot.Controllers;
 
 public class HomeController:ControllerBase
 {
-    public async Task Start(UserControllerContext context)
+    public async Task Index(UserControllerContext context)
     {
-        await context.SendTextMessage("Welcome!");
+        await context.SendBoldTextMessage("Welcome English Conversations bot!!!");
     }
     protected override async Task HandleAction(UserControllerContext context)
     {
-        // if (context.Session.Action == nameof(this.Start))
-        //     await this.Start(context);
-        //
-        // await this.Start(context);
+        // if (context.Session.Action == nameof(this.Index))
+        //     await this.Index(context);
         
+        await this.Index(context);
     }
 
     protected override async Task HandleUpdate(UserControllerContext context)
     {
         //Check commands
-        var update = context.Update;
-        if (update.Type == UpdateType.Message && update.Message!.Type == MessageType.Text)
+        if (message!.Type == MessageType.Text)
         {
-            var text = update.Message.Text;
+            var text = message.Text;
             if (text is not null)
                 switch (text)
                 {
                     case "/start":
-                        await this.Start(context);
+                        context.Session.Action = nameof(Index);
                         break;
                     case "/login":
-                        await this.Login(context);
+                        context.Session.Controller = nameof(AuthController);
+                        context.Session.Action = nameof(AuthController.LoginUserStart);
                         break;
                     case "/register":
-                        await this.Register(context);
+                        context.Session.Controller = nameof(AuthController);
+                        context.Session.Action = nameof(AuthController.RegistrationStart);
                         break;
                 }
         }
         // throw new NotImplementedException();
     }
 
-    public async Task Login(UserControllerContext context)
-    {
-        context.Session.Controller = nameof(AuthController);
-        context.Session.Action = nameof(AuthController.LoginUserStart);
-
-        await context.Forward(this._controllerManager);
-    }
-
-    public async Task Register(UserControllerContext context)
-    {
-        context.Session.Controller = nameof(AuthController);
-        context.Session.Action = nameof(AuthController.RegistrationStart);
-
-        await context.Forward(this._controllerManager);
-    }
+    // public async Task Login(UserControllerContext context)
+    // {
+    //     context.Session.Controller = nameof(AuthController);
+    //     context.Session.Action = nameof(AuthController.LoginUserStart);
+    //
+    //     await context.Forward(this._controllerManager);
+    // }
+    //
+    // public async Task Register(UserControllerContext context)
+    // {
+    //     context.Session.Controller = nameof(AuthController);
+    //     context.Session.Action = nameof(AuthController.RegistrationStart);
+    //
+    //     await context.Forward(this._controllerManager);
+    // }
 
     public HomeController(ControllerManager.ControllerManager controllerManager) : base(controllerManager)
     {

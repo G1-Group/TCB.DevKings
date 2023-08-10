@@ -92,8 +92,8 @@ public class UserDataService:DataProvider
     {
         return new Models.User()
         {
-            UserId= reader.GetInt32(0),
-            TelegramClientId = reader.GetInt32(1),
+            UserId = reader.GetInt64(0),
+            TelegramClientId = reader.GetInt64(1),
             PhoneNumber = reader.GetString(2),
             Password = reader.GetString(3)
             

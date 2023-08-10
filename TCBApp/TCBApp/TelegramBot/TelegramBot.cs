@@ -1,4 +1,5 @@
 ﻿using TCBApp.Services;
+using TCBApp.TelegramBot.Controllers;
 using TCBApp.TelegramBot.Extensions;
 using TCBApp.TelegramBot.Managers;
 using Telegram.Bot;
@@ -13,6 +14,7 @@ public class TelegramBot
     private readonly ClientDataService _clientDataService;
     private readonly UserDataService _userDataService;
     private readonly AuthService _authService;
+    private readonly BoardService _boardService;
     public static TelegramBotClient _client { get; set; }
 
     private SessionManager SessionManager { get; set; }
@@ -27,8 +29,9 @@ public class TelegramBot
         _userDataService = new UserDataService(Settings.dbConnectionString);
         _clientDataService = new ClientDataService(Settings.dbConnectionString);
         _authService = new AuthService(_userDataService, _clientDataService);
+        _boardService = new BoardService(Settings.dbConnectionString);
         
-        ControllerManager = new ControllerManager.ControllerManager(_userDataService, _clientDataService, _authService);
+        ControllerManager = new ControllerManager.ControllerManager(_userDataService, _clientDataService, _authService, _boardService);
         SessionManager = new SessionManager(_userDataService);
         
         updateHandlers = new List<Func<UserControllerContext, CancellationToken, Task>>();
@@ -44,12 +47,27 @@ public class TelegramBot
             
             var session = await SessionManager.GetSessionByChatId(context.Update.Message.Chat.Id);
             context.Session = session;
+            context.TerminateSession = async () => await this.SessionManager.TerminateSession(context.Session);
         });
         
         //Log handler
         this.updateHandlers.Add(async (context, token) =>
         {
             Console.WriteLine("Log -> {0} | {1} | {2}", DateTime.Now, context.Session.ChatId, context.Update.Message?.Text ?? context.Update.Message?.Caption);
+        });
+        
+        //Check for auth
+        List<string> authRequiredControllers = new List<string>()
+        {
+            nameof(BoardController),
+            nameof(ClientDashboardController)
+        };
+        this.updateHandlers.Add(async (context, token) =>
+        {
+            if (context.Session is not null && authRequiredControllers.Contains(context.Session.Controller) && context.Session.ClientId is null)
+            {
+                await context.SendErrorMessage("Unauthorized", 401);
+            }
         });
         
         
