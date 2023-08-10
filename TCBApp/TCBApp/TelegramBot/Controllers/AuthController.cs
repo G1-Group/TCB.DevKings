@@ -43,7 +43,10 @@ public class AuthController : ControllerBase
                 Password = password
             });
         if (client is not null)
+        {
+            context.Session.ClientId = client.ClientId;
             await context.SendTextMessage($"Client id: {client.ClientId}\n Nickname: {client.Nickname}");
+        }
         else 
             await context.SendTextMessage("User not found!");
 
