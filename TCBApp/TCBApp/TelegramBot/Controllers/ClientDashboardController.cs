@@ -30,7 +30,7 @@ public class ClientDashboardController : ControllerBase
         }
         else
         {
-            await context.SendErrorMessage("Foydalanuvchi ma'lumotlari topilmadi");
+            await context.SendErrorMessage("Foydalanuvchi ma'lumotlari topilmadi❌");
         }
 
     }

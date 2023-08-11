@@ -69,7 +69,7 @@ public class BoardController:ControllerBase
 
         context.Session.BoardData = null;
         context.Session.Action = nameof(Index);
-        await context.SendBoldTextMessage("Board successfully created!", replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
+        await context.SendBoldTextMessage("Board successfully created✅", replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
     }
 
 
