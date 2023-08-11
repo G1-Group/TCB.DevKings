@@ -4,6 +4,7 @@ using TCBApp.Services;
 using TCBApp.TelegramBot.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TCBApp.TelegramBot.Controllers;
 
@@ -53,7 +54,7 @@ public class AuthController : ControllerBase
             return;
         }
         else 
-            await context.SendBoldTextMessage("User not found!");
+            await context.SendBoldTextMessage("User not found❌");
 
         context.Session.Controller = null;
         context.Session.Action = null;
@@ -64,7 +65,7 @@ public class AuthController : ControllerBase
     public async Task RegistrationStart(UserControllerContext context)
     {
         context.Session.RegistrationModel = new UserRegistrationModel();
-        await context.SendTextMessage("Enter your phone number as \"+998900000000\":");
+        await context.SendTextMessage("Enter your phone number as \"+998900000000\"📲:");
         context.Session.Action = nameof(RegistrationPhoneNumber);
     }
 
@@ -82,7 +83,7 @@ public class AuthController : ControllerBase
 
         await _authService.RegisterUser(context.Session.RegistrationModel);
         
-        await context.SendBoldTextMessage("You Succesfully registired. Please re-sign in!");
+        await context.SendBoldTextMessage("You Succesfully registired. Please re-sign in✅");
 
         context.Session.Controller = null;
         context.Session.Action = null;
