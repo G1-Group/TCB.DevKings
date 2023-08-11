@@ -3,6 +3,7 @@ using TCBApp.Models;
 using TCBApp.Services;
 using TCBApp.TelegramBot.Extensions;
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
 
 namespace TCBApp.TelegramBot.Controllers;
 
@@ -43,9 +44,16 @@ public class AuthController : ControllerBase
                 Password = password
             });
         if (client is not null)
-            await context.SendTextMessage($"Client id: {client.ClientId}\n Nickname: {client.Nickname}");
+        {
+            context.Session.ClientId = client.ClientId;
+            context.Session.Controller = nameof(ClientDashboardController);
+            context.Session.Action = nameof(ClientDashboardController.Index);
+            
+            await context.Forward(this._controllerManager);
+            return;
+        }
         else 
-            await context.SendTextMessage("User not found!");
+            await context.SendBoldTextMessage("User not found!");
 
         context.Session.Controller = null;
         context.Session.Action = null;
@@ -56,14 +64,14 @@ public class AuthController : ControllerBase
     public async Task RegistrationStart(UserControllerContext context)
     {
         context.Session.RegistrationModel = new UserRegistrationModel();
-        await context.SendTextMessage("Enter your phone number as \"+998900000000\"");
+        await context.SendTextMessage("Enter your phone number as \"+998900000000\":");
         context.Session.Action = nameof(RegistrationPhoneNumber);
     }
 
     public async Task RegistrationPhoneNumber(UserControllerContext context)
     {
         context.Session.RegistrationModel.PhoneNumber = context.Update.Message.Text;
-        await context.SendTextMessage("Please Enter your password");
+        await context.SendTextMessage("Please Enter your password: ");
         context.Session.Action = nameof(RegistrationPassword);
     }
 
@@ -74,7 +82,7 @@ public class AuthController : ControllerBase
 
         await _authService.RegisterUser(context.Session.RegistrationModel);
         
-        await context.SendTextMessage("You Succesfully registired");
+        await context.SendBoldTextMessage("You Succesfully registired. Please re-sign in!");
 
         context.Session.Controller = null;
         context.Session.Action = null;

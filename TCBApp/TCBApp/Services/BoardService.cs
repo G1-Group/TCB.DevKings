@@ -8,13 +8,13 @@ namespace TCBApp.Services;
 public class BoardService:IBoardInterface
 {
 
-    private BoardDataService boardDataService;
-    private MessageDataService messageDataService;
+    public readonly BoardDataService boardDataService;
+    public readonly MessageDataService messageDataService;
 
-    public BoardService()
+    public BoardService(string connectionString)
     {
-        // boardDataService = new BoardDataService(DBConnection.connection);
-        // messageDataService = new MessageDataService(DBConnection.connection);
+        boardDataService = new BoardDataService(connectionString);
+        messageDataService = new MessageDataService(connectionString);
     }
  
 

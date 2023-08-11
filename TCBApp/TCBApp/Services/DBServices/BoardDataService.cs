@@ -14,6 +14,7 @@ public class BoardDataService:DataProvider
     private static string tableName = "boards";
 
     private string selectQuery = $"SELECT * FROM {tableName}";
+    private string selectByOwnerIdQuery = $"SELECT * FROM {tableName} WHERE owner_id = @p0;";
     
     private string selectByIdQuery = $"SELECT * FROM {tableName} WHERE board_Id = @p0";
     
@@ -37,6 +38,18 @@ public class BoardDataService:DataProvider
         return result;
     }
 
+    public async Task<List<BoardModel>> GetAllByOwnerId(long ownerId)
+    {
+        var reader = await this.ExecuteWithResult(this.selectByOwnerIdQuery, new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", ownerId)
+        });
+        List<BoardModel> result = new List<BoardModel>();
+        while (reader.Read())
+            result.Add(await this.ReaderDataToModel(reader));
+
+        return result;
+    }
 
     public async Task<BoardModel?> GetById(long id)
     {
@@ -70,7 +83,7 @@ public class BoardDataService:DataProvider
             BoardId = reader.GetInt32(0),
             NickName= reader.GetString(1),
             OwnerId = reader.GetInt32(2),
-            BoardStatus= (BoardStatus)Enum.Parse(typeof(BoardStatus), reader.GetString(3), true),
+            BoardStatus= (BoardStatus)reader.GetInt32(3),
            
         };
     }
