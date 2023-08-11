@@ -11,7 +11,7 @@ public static class KeyboardButtonExtensions
             new List<KeyboardButton>()
             {
                 new KeyboardButton("User Info"),
-                new KeyboardButton("Settings"),
+                new KeyboardButton("Settings⚙️"),
             },
             new List<KeyboardButton>()
             {
@@ -25,6 +25,17 @@ public static class KeyboardButtonExtensions
         };
 
         return MakeDefaultReplyKeyboardMarkup(buttons);
+    }
+
+    public static ReplyKeyboardMarkup FindBoardNickNameReplyKeyboardMarkup(this UserControllerContext context)
+    {
+        var buttons = new List<KeyboardButton>()
+        {
+            new KeyboardButton("Send message"),
+            new KeyboardButton("Back"),
+        };
+
+        return MakeDefaultReplyKeyboardMarkup(buttons.ToArray());
     }
 
     public static ReplyKeyboardMarkup MakeBoardsReplyKeyboardMarkup(this UserControllerContext context)
@@ -57,7 +68,7 @@ public static class KeyboardButtonExtensions
             OneTimeKeyboard = true
         };
     }
-    
+
     private static ReplyKeyboardMarkup MakeDefaultReplyKeyboardMarkup(params KeyboardButton[] buttons)
     {
         return new ReplyKeyboardMarkup(buttons)

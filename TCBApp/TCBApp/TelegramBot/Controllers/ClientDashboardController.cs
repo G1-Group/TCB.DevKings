@@ -69,6 +69,8 @@ public class ClientDashboardController : ControllerBase
                 case "Log out":
                     context.Session.Action = nameof(LogOut);
                     break;
+                case "Settings⚙️":
+                    break;
             }
         }
     }

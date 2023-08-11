@@ -76,9 +76,9 @@ public class BoardService:IBoardInterface
         return boardDataService.GetAll().Result;
     }
 
-    public async Task<BoardModel> FindBoardByNickName(string nickName)
+    public async Task<BoardModel?> FindBoardByNickName(string nickName)
     {
-        return  boardDataService.GetAll().Result.Find(x=>x.NickName == nickName);
+        return await boardDataService.GetByNickname(nickName);
     }
 }
    
