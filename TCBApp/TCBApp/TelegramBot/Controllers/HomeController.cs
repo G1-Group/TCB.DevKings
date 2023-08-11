@@ -1,21 +1,27 @@
 ﻿using TCBApp.TelegramBot.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TCBApp.TelegramBot.Controllers;
 
-
-public class HomeController:ControllerBase
+public class HomeController : ControllerBase
 {
     public async Task Index(UserControllerContext context)
     {
-        await context.SendBoldTextMessage("Welcome English Conversations bot!!!");
+        await context.SendBoldTextMessage("Welcome English Conversations bot!!!", replyMarkup:
+            new ReplyKeyboardMarkup(new []{new KeyboardButton("Login"), new KeyboardButton("Register")})
+            {
+                ResizeKeyboard = true,
+                OneTimeKeyboard = true
+            });
     }
+
     protected override async Task HandleAction(UserControllerContext context)
     {
         // if (context.Session.Action == nameof(this.Index))
         //     await this.Index(context);
-        
+
         await this.Index(context);
     }
 
@@ -31,11 +37,11 @@ public class HomeController:ControllerBase
                     case "/start":
                         context.Session.Action = nameof(Index);
                         break;
-                    case "/login":
+                    case "Login":
                         context.Session.Controller = nameof(AuthController);
                         context.Session.Action = nameof(AuthController.LoginUserStart);
                         break;
-                    case "/register":
+                    case "Register":
                         context.Session.Controller = nameof(AuthController);
                         context.Session.Action = nameof(AuthController.RegistrationStart);
                         break;
@@ -62,6 +68,5 @@ public class HomeController:ControllerBase
 
     public HomeController(ControllerManager.ControllerManager controllerManager) : base(controllerManager)
     {
-        
     }
 }

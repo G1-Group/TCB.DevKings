@@ -18,6 +18,35 @@ public class BoardController:ControllerBase
         _boardService = boardService;
         _boardDataService = boardService.boardDataService;
     }
+
+    public async Task FindBoardStart(UserControllerContext context)
+    {
+        context.Session.Action = nameof(FindBoardNickName);
+        await context.SendTextMessage("Enter nickname for new board: ", replyMarkup: new ReplyKeyboardRemove());
+    }
+    public async Task FindBoardNickName(UserControllerContext context)
+    {
+        var result = await _boardService.FindBoardByNickName(message.Text);
+        if (result is not null)
+        {
+            await context.SendTextMessage("Board topildi.",context.FindBoardNickNameReplyKeyboardMarkup());
+        }
+        else
+        {
+            context.Session.Action = nameof(Index);
+            await context.SendTextMessage("Not found 🤷‍♂️",
+                new ReplyKeyboardMarkup(new KeyboardButton("Back"))
+            {
+                ResizeKeyboard = true,
+                OneTimeKeyboard = true
+            });
+        }
+    }
+
+    public async Task FindBoardNickNameSendMessage(UserControllerContext context)
+    {
+    }
+
     public async Task MyBoards(UserControllerContext context)
     {
         var allBoards = await _boardDataService.GetAllByOwnerId(context.Session.ClientId.Value);
@@ -89,6 +118,12 @@ public class BoardController:ControllerBase
             case nameof(CreateBoardNickname):
                 await this.CreateBoardNickname(context);
                 break;
+            case nameof(FindBoardStart):
+                await this.FindBoardStart(context);
+                break;
+            case nameof(FindBoardNickName):
+                await this.FindBoardNickName(context);
+                break;
         }
     }
     
@@ -106,6 +141,7 @@ public class BoardController:ControllerBase
             {
                 "My boards" => nameof(this.MyBoards),
                 "Create" => nameof(this.CreateBoardStart),
+                "Find board" => nameof(this.FindBoardStart),
                 _ => context.Session.Action
             };
         }

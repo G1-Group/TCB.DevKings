@@ -15,6 +15,7 @@ public class BoardDataService:DataProvider
 
     private string selectQuery = $"SELECT * FROM {tableName}";
     private string selectByOwnerIdQuery = $"SELECT * FROM {tableName} WHERE owner_id = @p0;";
+    private string selectByNicknameQuery = $"SELECT * FROM {tableName} WHERE nickname = @p0;";
     
     private string selectByIdQuery = $"SELECT * FROM {tableName} WHERE board_Id = @p0";
     
@@ -49,6 +50,19 @@ public class BoardDataService:DataProvider
             result.Add(await this.ReaderDataToModel(reader));
 
         return result;
+    }
+    
+    public async Task<BoardModel?> GetByNickname(string nickname)
+    {
+        var reader = await this.ExecuteWithResult(this.selectByNicknameQuery, new NpgsqlParameter[]
+        {
+            new NpgsqlParameter("@p0", nickname)
+        });
+        List<BoardModel> result = new List<BoardModel>();
+        while (reader.Read())
+            result.Add(await this.ReaderDataToModel(reader));
+
+        return result.FirstOrDefault();
     }
 
     public async Task<BoardModel?> GetById(long id)
