@@ -4,7 +4,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 namespace TCBApp.TelegramBot.Extensions;
 
 public static class KeyboardButtonExtensions
-{   
+{
     public static ReplyKeyboardMarkup MakeClientDashboardReplyKeyboardMarkup(this UserControllerContext context)
     {
         var buttons = new List<List<KeyboardButton>>()
@@ -80,9 +80,9 @@ public static class KeyboardButtonExtensions
         };
     }
 
-    public static ReplyKeyboardMarkup RequesPhoheNumberReplyKeyboardMarkup(this UserControllerContext contexg) 
+    public static ReplyKeyboardMarkup RequesPhoheNumberReplyKeyboardMarkup(this UserControllerContext contexg)
         => MakeDefaultReplyKeyboardMarkup(new KeyboardButton("Send my phone number") { RequestContact = true });
-    
+
     public static ReplyKeyboardMarkup SettingsStartReplyKeyboardMarkup(this UserControllerContext context)
     {
         var buttons = new List<List<KeyboardButton>>()
@@ -100,5 +100,21 @@ public static class KeyboardButtonExtensions
 
         return MakeDefaultReplyKeyboardMarkup(buttons);
     }
-    
+
+    public static ReplyKeyboardMarkup ConversationStartReplyKeyboardMarkup(this UserControllerContext context)
+    {
+        var buttons = new List<List<KeyboardButton>>()
+        {
+            new List<KeyboardButton>()
+            {
+                new KeyboardButton("Start Conversation"),
+                new KeyboardButton("Back")
+            }
+        };
+
+        return MakeDefaultReplyKeyboardMarkup(buttons);
+    }
+
+    public static ReplyKeyboardMarkup Back(this UserControllerContext context)
+        => MakeDefaultReplyKeyboardMarkup(new KeyboardButton("Back"));
 }

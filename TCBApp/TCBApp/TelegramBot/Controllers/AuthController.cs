@@ -15,19 +15,18 @@ public class AuthController : ControllerBase
     private string login = null;
     private string phonenumber = null;
     private string password;
-    
 
-    public AuthController(AuthService authService, ControllerManager.ControllerManager controllerManager) : base(controllerManager)
+
+    public AuthController(AuthService authService, ControllerManager.ControllerManager controllerManager) : base(
+        controllerManager)
     {
         _authService = authService;
     }
 
     public async Task LoginUserStart(UserControllerContext context)
     {
-
-        await context.SendTextMessage("Please enter phone number to Sign In");
-
-     await context.SendBoldTextMessage("Please enter phone number : ",context.RequesPhoheNumberReplyKeyboardMarkup());
+        await context.SendBoldTextMessage("Please enter phone number : ",
+            context.RequesPhoheNumberReplyKeyboardMarkup());
 
         context.Session.Action = nameof(LoginUserLogin);
     }
@@ -44,20 +43,20 @@ public class AuthController : ControllerBase
     {
         var password = context.Update.Message.Text;
         var client = await _authService.Login(new UserLoginModel()
-            {
-                Login = login,
-                Password = password
-            });
+        {
+            Login = login,
+            Password = password
+        });
         if (client is not null)
         {
             context.Session.ClientId = client.ClientId;
             context.Session.Controller = nameof(ClientDashboardController);
             context.Session.Action = nameof(ClientDashboardController.Index);
-            
+
             await context.Forward(this._controllerManager);
             return;
         }
-        else 
+        else
             await context.SendBoldTextMessage("User not found❌");
 
         context.Session.Controller = null;
@@ -69,7 +68,7 @@ public class AuthController : ControllerBase
     public async Task RegistrationStart(UserControllerContext context)
     {
         context.Session.RegistrationModel = new UserRegistrationModel();
-        await context.SendTextMessage("Enter your phone number :",context.RequesPhoheNumberReplyKeyboardMarkup());
+        await context.SendTextMessage("Enter your phone number :", context.RequesPhoheNumberReplyKeyboardMarkup());
         context.Session.Action = nameof(RegistrationPhoneNumber);
     }
 
@@ -86,7 +85,7 @@ public class AuthController : ControllerBase
         context.Session.RegistrationModel.ChatId = context.Session.ChatId;
 
         await _authService.RegisterUser(context.Session.RegistrationModel);
-        
+
         await context.SendBoldTextMessage("You Succesfully registired. Please re-sign in✅");
 
         context.Session.Controller = null;

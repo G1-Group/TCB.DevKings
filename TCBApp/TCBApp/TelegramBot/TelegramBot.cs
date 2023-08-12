@@ -7,6 +7,7 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+
 namespace TCBApp.TelegramBot;
 
 public class TelegramBot
@@ -20,20 +21,19 @@ public class TelegramBot
     private SessionManager SessionManager { get; set; }
     private ControllerManager.ControllerManager ControllerManager { get; set; }
     private List<Func<UserControllerContext, CancellationToken, Task>> updateHandlers { get; set; }
-    
-  
+
+
     public TelegramBot()
     {
         _client = new TelegramBotClient(Settings.botToken);
-        
         _userDataService = new UserDataService(Settings.dbConnectionString);
         _clientDataService = new ClientDataService(Settings.dbConnectionString);
         _authService = new AuthService(_userDataService, _clientDataService);
         _boardService = new BoardService(Settings.dbConnectionString);
-        
-        ControllerManager = new ControllerManager.ControllerManager(_userDataService, _clientDataService, _authService, _boardService);
+        ControllerManager =
+            new ControllerManager.ControllerManager(_userDataService, _clientDataService, _authService, _boardService);
         SessionManager = new SessionManager(_userDataService);
-        
+
         updateHandlers = new List<Func<UserControllerContext, CancellationToken, Task>>();
     }
 
@@ -44,18 +44,19 @@ public class TelegramBot
         {
             if (context.Update?.Message?.Chat.Id is null)
                 throw new Exception("Chat id not found to find session");
-            
+
             var session = await SessionManager.GetSessionByChatId(context.Update.Message.Chat.Id);
             context.Session = session;
             context.TerminateSession = async () => await this.SessionManager.TerminateSession(context.Session);
         });
-        
+
         //Log handler
         this.updateHandlers.Add(async (context, token) =>
         {
-            Console.WriteLine("Log -> {0} | {1} | {2}", DateTime.Now, context.Session.ChatId, context.Update.Message?.Text ?? context.Update.Message?.Caption);
+            Console.WriteLine("Log -> {0} | {1} | {2}", DateTime.Now, context.Session.ChatId,
+                context.Update.Message?.Text ?? context.Update.Message?.Caption);
         });
-        
+
         //Check for auth
         List<string> authRequiredControllers = new List<string>()
         {
@@ -64,18 +65,17 @@ public class TelegramBot
         };
         this.updateHandlers.Add(async (context, token) =>
         {
-            if (context.Session is not null && authRequiredControllers.Contains(context.Session.Controller) && context.Session.ClientId is null)
+            if (context.Session is not null && authRequiredControllers.Contains(context.Session.Controller) &&
+                context.Session.ClientId is null)
             {
                 await context.SendErrorMessage("Unauthorized", 401);
             }
         });
-        
-        
-        this.updateHandlers.Insert(this.updateHandlers.Count, async (context, token) =>
-        {
-            await context.Forward(this.ControllerManager);
-        });
-        
+
+
+        this.updateHandlers.Insert(this.updateHandlers.Count,
+            async (context, token) => { await context.Forward(this.ControllerManager); });
+
         await StartReceiver();
     }
 
@@ -95,7 +95,7 @@ public class TelegramBot
         {
             Update = update
         };
-        
+
         try
         {
             foreach (var updateHandler in this.updateHandlers)
@@ -105,7 +105,6 @@ public class TelegramBot
         {
             Console.WriteLine("Handler Error: " + e.Message);
         }
-        
     }
 
 
@@ -113,5 +112,4 @@ public class TelegramBot
     {
         // Handle any errors that occur during message processing here.
     }
- 
 }

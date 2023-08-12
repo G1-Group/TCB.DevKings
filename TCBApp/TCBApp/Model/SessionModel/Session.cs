@@ -8,6 +8,9 @@ public class Session
     public string Controller { get; set; }
     public long ChatId { get; set; }
     public long? ClientId { get; set; }
+    
+    public long? AnonymTelegramChatIdFirst { get; set; }
+    public long? AnonymTelegramChatIdSecond { get; set; }
     public UserRegistrationModel RegistrationModel { get; set; }
     public BoardSessionModel BoardData{ get; set; }
 }

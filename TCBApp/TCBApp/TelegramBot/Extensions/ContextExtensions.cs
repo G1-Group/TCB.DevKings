@@ -47,4 +47,5 @@ public static class ContextExtensions
         return await context.SendTextMessage($"<b>{text}</b>", parseMode: parseMode ?? ParseMode.Html, replyMarkup: replyMarkup);
     }
     
+    
 }

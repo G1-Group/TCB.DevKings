@@ -11,9 +11,11 @@ public class ConversationService:IConversationInterface
     {
         // Service = new ConversationDataService(DBConnection.connection);
     }
+
+
     public int CreateConversation(ChatModel chat)
     {
-       return Service.Insert(chat).Result;
+        throw new NotImplementedException();
     }
 
     public ChatModel StopConversation(long chatId)
