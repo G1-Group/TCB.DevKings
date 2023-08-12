@@ -30,9 +30,9 @@ public class ClientService: IClientService
        return client;
     }
 
-    public async Task<Client?> FindClient(Client data)
+    public async Task<Client?> FindClient(long clientId)
     {
-        var client =await _clientDataService.GetById(data.ClientId);
+        var client =await _clientDataService.GetById(clientId);
         return client;
     }
 

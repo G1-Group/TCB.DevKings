@@ -1,3 +1,4 @@
+using System.Net.Security;
 using TCBApp.Models;
 using TCBApp.Services;
 using TCBApp.TelegramBot.Extensions;
@@ -70,7 +71,18 @@ public class ClientDashboardController : ControllerBase
                     context.Session.Action = nameof(LogOut);
                     break;
                 case "Settings⚙️":
+                    context.Session.Controller = nameof(SettingsController);
+                    context.Session.Action = nameof(SettingsController.Index);
                     break;
+                case "User Info":
+                    context.Session.Controller = nameof(ClientInfoController);
+                    context.Session.Action = nameof(ClientInfoController.Index);
+                    break;
+                case "Conversations":
+                    context.Session.Controller = nameof(ConversationsController);
+                    context.Session.Action = nameof(ConversationsController.Index);                    
+                    break;
+                
             }
         }
     }

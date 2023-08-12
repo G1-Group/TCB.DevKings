@@ -1,9 +1,10 @@
+using TCBApp.TelegramBot.Controllers;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TCBApp.TelegramBot.Extensions;
 
 public static class KeyboardButtonExtensions
-{
+{   
     public static ReplyKeyboardMarkup MakeClientDashboardReplyKeyboardMarkup(this UserControllerContext context)
     {
         var buttons = new List<List<KeyboardButton>>()
@@ -32,6 +33,7 @@ public static class KeyboardButtonExtensions
         var buttons = new List<KeyboardButton>()
         {
             new KeyboardButton("Send message"),
+            new KeyboardButton("Messages"),
             new KeyboardButton("Back"),
         };
 
@@ -69,7 +71,7 @@ public static class KeyboardButtonExtensions
         };
     }
 
-    private static ReplyKeyboardMarkup MakeDefaultReplyKeyboardMarkup(params KeyboardButton[] buttons)
+    public static ReplyKeyboardMarkup MakeDefaultReplyKeyboardMarkup(params KeyboardButton[] buttons)
     {
         return new ReplyKeyboardMarkup(buttons)
         {
@@ -77,4 +79,26 @@ public static class KeyboardButtonExtensions
             OneTimeKeyboard = true
         };
     }
+
+    public static ReplyKeyboardMarkup RequesPhoheNumberReplyKeyboardMarkup(this UserControllerContext contexg) 
+        => MakeDefaultReplyKeyboardMarkup(new KeyboardButton("Send my phone number") { RequestContact = true });
+    
+    public static ReplyKeyboardMarkup SettingsStartReplyKeyboardMarkup(this UserControllerContext context)
+    {
+        var buttons = new List<List<KeyboardButton>>()
+        {
+            new List<KeyboardButton>()
+            {
+                new KeyboardButton("Delete Accaunt"),
+                new KeyboardButton("Delete Boards")
+            },
+            new List<KeyboardButton>()
+            {
+                new KeyboardButton("Back")
+            }
+        };
+
+        return MakeDefaultReplyKeyboardMarkup(buttons);
+    }
+    
 }
