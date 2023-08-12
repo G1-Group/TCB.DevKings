@@ -34,7 +34,7 @@ public class ControllerManager
         this._homeController = new HomeController(this);
         this._authController = new AuthController(authService, this);
         this._clientDashboardController = new ClientDashboardController(this, clientDataService);
-        this._boardController = new BoardController(this, boardService);
+        this._boardController = new BoardController(this, boardService,_messageService);
         this._settingsController = new SettingsController(this,clientDataService, boardService);
         _clientInfoController = new ClientInfoController(this,clientDataService);
 
