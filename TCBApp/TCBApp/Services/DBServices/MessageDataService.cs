@@ -14,7 +14,9 @@ public class MessageDataService:DataProvider
 
     private string selectQuery = $"SELECT * FROM {tableName}";
     
-    private string selectByIdQuery = $"SELECT * FROM {tableName} WHERE id = @p0";
+    private string selectByBoardIdQuery = $"SELECT * FROM {tableName} WHERE board_id = @p0";
+    private string selectByChatIdQuery = $"SELECT * FROM {tableName} WHERE chat_id = @p0";
+    private string selectByMessageIdQuery = $"SELECT * FROM {tableName} WHERE chat_id = @p0";
     
     string updateQuery =
         $"UPDATE boards SET from_id = @p1 , message = @p2,chat_id=@p3,board_id=@p4,message_type=@p6,message_status=@p5  WHERE id = @p0 ;";
@@ -40,7 +42,7 @@ public class MessageDataService:DataProvider
 
     public async Task<List<Message?>> GetByIdFromBoard(long id)
     {
-        var reader = await this.ExecuteWithResult(this.selectByIdQuery, new NpgsqlParameter[]
+        var reader = await this.ExecuteWithResult(this.selectByBoardIdQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p3", id)
         });
@@ -53,7 +55,7 @@ public class MessageDataService:DataProvider
     
     public async Task<List<Message?>> GetByIdFromChat(long id)
     {
-        var reader = await this.ExecuteWithResult(this.selectByIdQuery, new NpgsqlParameter[]
+        var reader = await this.ExecuteWithResult(this.selectByChatIdQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p2", id)
         });
@@ -105,7 +107,7 @@ public class MessageDataService:DataProvider
     
     public async Task<Message> FindByIdMessage(long Id)
     {
-        var reader = await this.ExecuteWithResult(selectByIdQuery, new NpgsqlParameter[]
+        var reader = await this.ExecuteWithResult(selectByMessageIdQuery, new NpgsqlParameter[]
         {
             new NpgsqlParameter("@p0", Id)
         });

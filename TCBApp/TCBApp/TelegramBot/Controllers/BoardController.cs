@@ -55,6 +55,7 @@ public class BoardController:ControllerBase
         context.SendTextMessage("Write message✍️: ", replyMarkup: new ReplyKeyboardRemove());
         context.Session.Action = nameof(SendMessageToBoard);
     } 
+    
     public async Task SendMessageToBoard(UserControllerContext context)
     {
        var res=  _messageService.SendMessageToBoard(new Message
@@ -72,7 +73,8 @@ public class BoardController:ControllerBase
        else
            context.SendTextMessage("Xabar yuborilmadi.Xatolik yuz bedi❌",context.FindBoardNickNameReplyKeyboardMarkup()).Wait();
         
-       context.Session.Action = nameof(Index);
+       context.Session.Controller = null;
+       context.Session.Action = null;
     }
 
 
@@ -119,7 +121,6 @@ public class BoardController:ControllerBase
     
     public async Task GetBoardMessagesStart(UserControllerContext context)
     {
-        
         await context.SendTextMessage("Board nicknameni kiriting: ");
         context.Session.Action = nameof(GetBoardMessages);
     }
@@ -138,8 +139,9 @@ public class BoardController:ControllerBase
         {
             await context.SendTextMessage("Sizga habarlar mavjud emas");
         }
-
-        context.Session.Action = nameof(Index);
+        context.Session.Controller = null;
+        context.Session.Action = null;
+        
     }
     public async Task CreateBoardNickname(UserControllerContext context)
     {
