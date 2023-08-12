@@ -47,6 +47,11 @@ public class BoardController:ControllerBase
     {
     }
 
+    public async Task FindBoardMessages(UserControllerContext context)
+    {
+        
+    }
+
     public async Task MyBoards(UserControllerContext context)
     {
         var allBoards = await _boardDataService.GetAllByOwnerId(context.Session.ClientId.Value);
@@ -100,7 +105,6 @@ public class BoardController:ControllerBase
         context.Session.Action = nameof(Index);
         await context.SendBoldTextMessage("Board successfully created✅", replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
     }
-
 
     protected override async Task HandleAction(UserControllerContext context)
     {
