@@ -67,9 +67,10 @@ public class MessageDataService:DataProvider
     }
 
     public async Task<int> Insert(Message message) {
+        Console.WriteLine(nameof(Insert));
         return await this.ExecuteNonResult(this.insertQuery, new NpgsqlParameter[] {
             new NpgsqlParameter("@p1", message.FromId),
-            new NpgsqlParameter("@p2", message._Message),
+            new NpgsqlParameter("@p2", message._Message.ToString()),
             new NpgsqlParameter("@p3", message.ChatId),
             new NpgsqlParameter("@p4", message.BoardId),
             new NpgsqlParameter("@p5",(int)message.MessageType ),
