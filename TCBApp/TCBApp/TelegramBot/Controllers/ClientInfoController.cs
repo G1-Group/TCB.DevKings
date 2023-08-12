@@ -17,12 +17,9 @@ public class ClientInfoController :ControllerBase
 
     public async Task Index(UserControllerContext context)
     {
-        Client client = await _clientDataService.GetById(context.Session.ClientId.Value);
-        string userName = client.UserName is not null ? client.UserName: null;
-        string nickName = client.Nickname is not null ? client.Nickname: null;
-        string premium = client.IsPremium is true ? "Active" : "Not Active";
-        string sendClientInfo = $"| Name : {userName} \n| Nick name : {nickName} \n| Premium : {premium}";
-        await context.SendBoldTextMessage(sendClientInfo,new ReplyKeyboardMarkup(new KeyboardButton("Back"))
+        var client = await _clientDataService.GetByIdFull(context.Session.ClientId.Value);
+        
+        await context.SendBoldTextMessage(client!,new ReplyKeyboardMarkup(new KeyboardButton("Back"))
         {
             ResizeKeyboard = true,
             OneTimeKeyboard = true
