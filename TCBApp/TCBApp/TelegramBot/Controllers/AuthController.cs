@@ -24,7 +24,7 @@ public class AuthController : ControllerBase
 
     public async Task LoginUserStart(UserControllerContext context)
     {
-        await context.SendTextMessage("Please Enter Login to Sign In");
+        await context.SendTextMessage("Please enter phone number to Sign In");
         context.Session.Action = nameof(LoginUserLogin);
     }
 
