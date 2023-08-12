@@ -24,7 +24,10 @@ public static class ContextExtensions
     
     public static async Task<Message> SendTextMessage(this UserControllerContext context, string text, IReplyMarkup? replyMarkup = null, ParseMode? parseMode = null)
     {
-        return await TelegramBot._client.SendTextMessageAsync(context.Update.Message!.Chat.Id, text, replyMarkup: replyMarkup, parseMode: parseMode);
+        return await TelegramBot._client.SendTextMessageAsync(
+            context.Update.Message!.Chat.Id, 
+            text, replyMarkup: replyMarkup, 
+            parseMode: parseMode);
     }
     
     public static async Task<Message> SendErrorMessage(this UserControllerContext context, string text = null, int code = 404)

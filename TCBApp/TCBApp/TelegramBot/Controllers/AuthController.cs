@@ -24,15 +24,19 @@ public class AuthController : ControllerBase
 
     public async Task LoginUserStart(UserControllerContext context)
     {
+
         await context.SendTextMessage("Please enter phone number to Sign In");
+
+     await context.SendBoldTextMessage("Please enter phone number : ",context.RequesPhoheNumberReplyKeyboardMarkup());
+
         context.Session.Action = nameof(LoginUserLogin);
     }
 
     private async Task LoginUserLogin(UserControllerContext context)
     {
-        login = context.Update.Message!.Text!;
+        login = context.Update.Message!.Contact!.PhoneNumber;
 
-        await _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Enter your password: ");
+        await context.SendBoldTextMessage("Enter your password : ");
         context.Session.Action = nameof(LoginUserPassword);
     }
 
@@ -65,13 +69,13 @@ public class AuthController : ControllerBase
     public async Task RegistrationStart(UserControllerContext context)
     {
         context.Session.RegistrationModel = new UserRegistrationModel();
-        await context.SendTextMessage("Enter your phone number as \"+998900000000\"📲:");
+        await context.SendTextMessage("Enter your phone number :",context.RequesPhoheNumberReplyKeyboardMarkup());
         context.Session.Action = nameof(RegistrationPhoneNumber);
     }
 
     public async Task RegistrationPhoneNumber(UserControllerContext context)
     {
-        context.Session.RegistrationModel.PhoneNumber = context.Update.Message.Text;
+        context.Session.RegistrationModel.PhoneNumber = context.Update.Message.Contact.PhoneNumber;
         await context.SendTextMessage("Please Enter your password: ");
         context.Session.Action = nameof(RegistrationPassword);
     }
