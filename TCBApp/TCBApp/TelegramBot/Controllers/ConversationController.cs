@@ -1,14 +1,23 @@
-﻿using Telegram.Bot;
+﻿using TCBApp.Services;
+using Telegram.Bot;
 
 namespace TCBApp.TelegramBot.Controllers;
 
 public class ConversationController:ControllerBase
 {
-    public ConversationController(ITelegramBotClient botClient) : base(botClient)
+    private ConversationService _conversationService;
+    public ConversationController(ControllerManager.ControllerManager controllerManager) : base(controllerManager)
     {
+        _conversationService = new ConversationService();
+        
     }
 
-    public override void HandleAction(UserControllerContext context)
+    protected override Task HandleAction(UserControllerContext context)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override Task HandleUpdate(UserControllerContext context)
     {
         throw new NotImplementedException();
     }

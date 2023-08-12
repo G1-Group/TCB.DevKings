@@ -24,7 +24,11 @@ public class AuthController : ControllerBase
 
     public async Task LoginUserStart(UserControllerContext context)
     {
-        await context.SendBoldTextMessage("Please enter phone number : ",context.RequesPhoheNumberReplyKeyboardMarkup());
+
+        await context.SendTextMessage("Please enter phone number to Sign In");
+
+     await context.SendBoldTextMessage("Please enter phone number : ",context.RequesPhoheNumberReplyKeyboardMarkup());
+
         context.Session.Action = nameof(LoginUserLogin);
     }
 

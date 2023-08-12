@@ -6,13 +6,16 @@ namespace TCBApp.TelegramBot.Controllers;
 public class AdminController:ControllerBase
 {
 
-    public AdminController(ITelegramBotClient botClient) : base(botClient)
+    public AdminController(ControllerManager.ControllerManager controllerManager) : base(controllerManager)
     {
     }
 
-    public override void HandleAction(UserControllerContext context)
+    protected async override Task HandleAction(UserControllerContext context)
     {
     }
-    
-    
+
+    protected override Task HandleUpdate(UserControllerContext context)
+    {
+        throw new NotImplementedException();
+    }
 }

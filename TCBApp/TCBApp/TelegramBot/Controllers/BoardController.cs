@@ -12,9 +12,12 @@ public class BoardController:ControllerBase
 {
     private readonly BoardService _boardService;
     private readonly BoardDataService _boardDataService;
+    private MessageService _messageService;
 
-    public BoardController(ControllerManager.ControllerManager controllerManager, BoardService boardService) : base(controllerManager)
+    public BoardController(ControllerManager.ControllerManager controllerManager, BoardService boardService,
+        MessageService messageService) : base(controllerManager)
     {
+        _messageService = messageService;
         _boardService = boardService;
         _boardDataService = boardService.boardDataService;
     }
@@ -22,14 +25,18 @@ public class BoardController:ControllerBase
     public async Task FindBoardStart(UserControllerContext context)
     {
         context.Session.Action = nameof(FindBoardNickName);
-        await context.SendTextMessage("Enter nickname for new board: ", replyMarkup: new ReplyKeyboardRemove());
+        await context.SendTextMessage("Enter board nickname: ", replyMarkup: new ReplyKeyboardRemove());
     }
+    
     public async Task FindBoardNickName(UserControllerContext context)
     {
         var result = await _boardService.FindBoardByNickName(message.Text);
         if (result is not null)
         {
             await context.SendTextMessage("Board topildi.",context.FindBoardNickNameReplyKeyboardMarkup());
+            context.Session.BoardData.NewBoardNickName = result.NickName;
+            context.Session.BoardData.BoardId = result.BoardId;
+            
         }
         else
         {
@@ -43,14 +50,37 @@ public class BoardController:ControllerBase
         }
     }
 
-    public async Task FindBoardNickNameSendMessage(UserControllerContext context)
+    public async Task SendMessageToBoardStart(UserControllerContext context)
     {
+        context.SendTextMessage("Write message✍️: ", replyMarkup: new ReplyKeyboardRemove());
+        context.Session.Action = nameof(SendMessageToBoard);
+    } 
+    public async Task SendMessageToBoard(UserControllerContext context)
+    {
+       var res=  _messageService.SendMessageToBoard(new Message
+        {
+            FromId = context.Session.ClientId.Value,
+            _Message = context.Update.Message.Text,
+            ChatId = 0,
+            BoardId = context.Session.BoardData.BoardId,
+            MessageType = Models.Enums.MessageType.BoardMessage,
+            MessageStatus = MessageStatus.NotRead
+        }).Result;
+       if (res == 1)
+           context.SendTextMessage("Xabar yuborildi✅",context.FindBoardNickNameReplyKeyboardMarkup()).Wait();
+       
+       else
+           context.SendTextMessage("Xabar yuborilmadi.Xatolik yuz bedi❌",context.FindBoardNickNameReplyKeyboardMarkup()).Wait();
+        
+       context.Session.Action = nameof(Index);
     }
+
 
     public async Task FindBoardMessages(UserControllerContext context)
     {
         
     }
+
 
     public async Task MyBoards(UserControllerContext context)
     {
@@ -58,8 +88,8 @@ public class BoardController:ControllerBase
 
         if (allBoards.Count == 0)
         {
-            context.Session.Action = nameof(Index);
-            await context.SendBoldTextMessage("Sizda hali boardlar mavjud emas!", replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
+            context.Session.Action = nameof(HandleUpdate);
+            await context.SendBoldTextMessage("Sizda hali boardlar mavjud emas🤷‍♂️", replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
             return;
         }
         
@@ -67,7 +97,7 @@ public class BoardController:ControllerBase
         
         message += string.Join(
             "\n",
-            allBoards.Select(board => $"{board.BoardId} | {board.NickName} | {board.BoardStatus};")
+            allBoards.Select(board => $"{board.NickName} | {board.BoardStatus};")
         );
 
         await context.SendTextMessage($"<code>{message}</code>", parseMode: ParseMode.Html, replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
@@ -83,9 +113,34 @@ public class BoardController:ControllerBase
     {
         context.Session.BoardData = new BoardSessionModel();
         context.Session.Action = nameof(CreateBoardNickname);
-        await context.SendTextMessage("Enter nickname for new board: ", replyMarkup: new ReplyKeyboardRemove());
+        await context.SendTextMessage("Enter nickname for new board✍️: ", replyMarkup: new ReplyKeyboardRemove());
     }
 
+    
+    public async Task GetBoardMessagesStart(UserControllerContext context)
+    {
+        
+        await context.SendTextMessage("Board nicknameni kiriting: ");
+        context.Session.Action = nameof(GetBoardMessages);
+    }
+    
+    public async Task GetBoardMessages(UserControllerContext context)
+    {
+        var res=await _messageService.GetBoardMessages(context.Session.BoardData.BoardId);
+        if (res.Count>0)
+        {
+            foreach (Message m in res)
+            {
+                 context.SendTextMessage($"{m._Message.ToString()}").Wait();
+            }
+        }
+        else
+        {
+            await context.SendTextMessage("Sizga habarlar mavjud emas");
+        }
+
+        context.Session.Action = nameof(Index);
+    }
     public async Task CreateBoardNickname(UserControllerContext context)
     {
         context.Session.BoardData.NewBoardNickName = message.Text;
@@ -128,6 +183,19 @@ public class BoardController:ControllerBase
             case nameof(FindBoardNickName):
                 await this.FindBoardNickName(context);
                 break;
+            case nameof(SendMessageToBoardStart):
+                await this.SendMessageToBoardStart(context);
+                break;
+            case nameof(SendMessageToBoard):
+                await this.SendMessageToBoard(context);
+                break;
+            case nameof(GetBoardMessages):
+                await this.GetBoardMessages(context);
+                break;
+            case nameof(GetBoardMessagesStart):
+                await this.GetBoardMessagesStart(context);
+                break;
+            
         }
     }
     
@@ -146,6 +214,8 @@ public class BoardController:ControllerBase
                 "My boards" => nameof(this.MyBoards),
                 "Create" => nameof(this.CreateBoardStart),
                 "Find board" => nameof(this.FindBoardStart),
+                "Send message" => nameof(this.SendMessageToBoardStart),
+                "Get board messages" => nameof(this.GetBoardMessagesStart),
                 _ => context.Session.Action
             };
         }

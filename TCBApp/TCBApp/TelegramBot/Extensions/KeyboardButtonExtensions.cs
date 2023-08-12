@@ -55,10 +55,10 @@ public static class KeyboardButtonExtensions
             },
             new List<KeyboardButton>()
             {
-                new KeyboardButton("Back")
+                new KeyboardButton("Get board messages"),
+                new KeyboardButton("Back"),
             }
         };
-
         return MakeDefaultReplyKeyboardMarkup(buttons);
     }
 

@@ -12,13 +12,24 @@ public class ControllerManager
     private readonly HomeController _homeController;
     private readonly ClientDashboardController _clientDashboardController;
     private readonly BoardController _boardController;
+    private readonly MessageDataService MessageDataService;
+    private MessageService _messageService;
+
     private readonly ConversationsController _conversationsController;
 
     private readonly SettingsController _settingsController;
+
     // private BoardController BoardController;
     // private ConversationController ConversationController;
     public ControllerManager(UserDataService dataService, ClientDataService clientDataService, AuthService authService, BoardService boardService  )
     {
+        MessageDataService = new MessageDataService(Settings.dbConnectionString);
+        this._homeController = new HomeController(this);
+        this._authController = new AuthController(authService, this);
+        this._clientDashboardController = new ClientDashboardController(this, clientDataService);
+        _messageService = new MessageService(MessageDataService);
+        this._boardController = new BoardController(this, boardService,_messageService);
+
         _conversationsController = new ConversationsController(this);
         this._homeController = new HomeController(this);
         this._authController = new AuthController(authService, this);
@@ -26,6 +37,7 @@ public class ControllerManager
         this._boardController = new BoardController(this, boardService);
         this._settingsController = new SettingsController(this,clientDataService, boardService);
         _clientInfoController = new ClientInfoController(this,clientDataService);
+
 
         // this._authController = new AuthController(botClient, new AuthService(dataService));
         // this.BoardController = new BoardController(botClient);
