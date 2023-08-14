@@ -1,4 +1,5 @@
 ﻿using TCBApp.Services;
+using TCBApp.Services.DataContexts;
 using TCBApp.TelegramBot.Controllers;
 using TCBApp.TelegramBot.Extensions;
 using TCBApp.TelegramBot.Managers;
@@ -18,17 +19,20 @@ public class TelegramBot
     private readonly BoardService _boardService;
     public static TelegramBotClient _client { get; set; }
 
+    private DataContext DataContext { get; set; }
     private SessionManager SessionManager { get; set; }
+    
     private ControllerManager.ControllerManager ControllerManager { get; set; }
     private List<Func<UserControllerContext, CancellationToken, Task>> updateHandlers { get; set; }
 
 
     public TelegramBot()
     {
+        DataContext = new DataContext();
         _client = new TelegramBotClient(Settings.botToken);
         _userDataService = new UserDataService(Settings.dbConnectionString);
         _clientDataService = new ClientDataService(Settings.dbConnectionString);
-        _authService = new AuthService(_userDataService, _clientDataService);
+        _authService = new AuthService(_userDataService, _clientDataService,DataContext);
         _boardService = new BoardService(Settings.dbConnectionString);
         ControllerManager =
             new ControllerManager.ControllerManager(_userDataService, _clientDataService, _authService, _boardService);

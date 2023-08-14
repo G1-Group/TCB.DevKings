@@ -4,6 +4,7 @@ using TCBApp.Services;
 using TCBApp.TelegramBot.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 namespace TCBApp.TelegramBot.Controllers;
@@ -27,7 +28,13 @@ public class ConversationsController : ControllerBase
 
     public async Task StartConversation(UserControllerContext context)
     {
-        await context.SendBoldTextMessage("Waiting...", context.Back());
+        await context.SendBoldTextMessage("Waiting...",
+            new ReplyKeyboardMarkup(new KeyboardButton(
+                "Stop conversation"))
+            {
+                ResizeKeyboard = true,
+                OneTimeKeyboard = true
+            });
         context.Session.Action = "WriteToAnonymRoom";
         if (waitingClients.Count % 2 == 0)
         {
@@ -60,13 +67,6 @@ public class ConversationsController : ControllerBase
 
     public async Task WriteToAnonymRoom(UserControllerContext context)
     {
-        if (message.Text == "Back")
-        {
-            context.Session.AnonymTelegramChatIdSecond = null;
-            context.Session.AnonymTelegramChatIdFirst = null;
-            context.Session.Action = nameof(Index);
-        }
-
         if (context.Session.AnonymTelegramChatIdFirst == context.Session.ChatId)
         {
             await _botClient.SendTextMessageAsync(context.Session.AnonymTelegramChatIdSecond, message.Text);
@@ -74,6 +74,13 @@ public class ConversationsController : ControllerBase
         else if (context.Session.AnonymTelegramChatIdSecond == context.Session.ChatId)
         {
             await _botClient.SendTextMessageAsync(context.Session.AnonymTelegramChatIdFirst, message.Text);
+        }
+
+        if (message.Text == "Stop conversation")
+        {
+            context.Session.AnonymTelegramChatIdSecond = null;
+            context.Session.AnonymTelegramChatIdFirst = null;
+            context.Session.Action = nameof(Index);
         }
     }
 
@@ -98,6 +105,13 @@ public class ConversationsController : ControllerBase
         if (message.Type is MessageType.Text)
         {
             if (message.Text == "Back")
+            {
+                context.Session.Controller = nameof(ClientDashboardController);
+                context.Session.Action = nameof(ClientDashboardController.Index);
+                return;
+            }
+            
+            if (message.Text == "Stop conversation")
             {
                 context.Session.Controller = nameof(ClientDashboardController);
                 context.Session.Action = nameof(ClientDashboardController.Index);
