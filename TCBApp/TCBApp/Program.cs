@@ -1,18 +1,21 @@
-﻿using System.Threading.Channels;
-using System.Xml.Serialization;
-using TCBApp.Models;
-using TCBApp.Models.Enums;
-using TCBApp.Services;
+﻿using TCBApp.Models;
+using TCBApp.Services.DataContexts;
 using TCBApp.TelegramBot;
-using TCBApp.TelegramBot.Controllers;
-using Telegram.Bot;
-using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 public class Program
 {
  public static async Task Main(string[] args)
  {
-   await new TelegramBot().Start();
+  await new TelegramBot().Start();
+  // DataContext dataContext = new DataContext();
+  // dataContext.users.Add(new User
+  //  {
+  //   UserId = 3,
+  //   PhoneNumber = "+998901092779",
+  //   Password = "321478965",
+  //   TelegramClientId = 0
+  //  });
+  // dataContext.SaveChanges();
  }
 
  //static string com = "Host=localhost; Port=5432; Database=SqlBot; username=postgres; password=Ogabek1407";

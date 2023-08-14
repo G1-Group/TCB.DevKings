@@ -1,16 +1,18 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TCBApp.Models;
 
+[Table("users")]
 public class User
 {
-    [Description("user_id")]
+    [Column("id")]
     public long UserId  { get; set; }
-    [Description("phone_number")]
+    [Column("phone_number")]
     public string PhoneNumber { get; set; }
-    [Description("password")]
+    [Column("password")]
     public string Password { get; set; }
-    [Description("telegram_client_id")]
+    [Column("telegram_client_id")]
     public long   TelegramClientId { get; set; }
     
 }

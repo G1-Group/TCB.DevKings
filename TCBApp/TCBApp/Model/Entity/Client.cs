@@ -1,19 +1,20 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using TCBApp.Models.Enums;
 namespace TCBApp.Models;
-
+[Table("clients")]
 public class Client
 {
-    [Description("client_id")]
+    [Column("client_id")]
     public long ClientId { get; set; }
-    [Description("user_id")]
+    [Column("user_id")]
     public long  UserId { get; set; }
-    [Description("user_name")]
+    [Column("user_name")]
     public string  UserName { get; set; }
-    [Description("nickname")]
+    [Column("nickname")]
     public string Nickname { get; set; }
-    [Description("status")]
+    [Column("status")]
     public ClientStatus Status { get; set; }
-    [Description("ispremium")]
+    [Column("ispremium")]
     public bool IsPremium { get; set; }
 }
