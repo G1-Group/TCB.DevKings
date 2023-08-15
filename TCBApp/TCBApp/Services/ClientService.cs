@@ -1,57 +1,33 @@
 using TCBApp.Interface;
 using TCBApp.Models;
+using TCBApp.Services.DataService;
 
 namespace TCBApp.Services;
 
-public class ClientService: IClientService
+public class ClientService : IClientService
 {
     private ClientDataService _clientDataService;
 
-    public ClientService()
+    public ClientService(ClientDataService clientDataService)
     {
-        // _clientDataService = new ClientDataService(DBConnection.connection);
+        _clientDataService = clientDataService;
     }
-
-    public async Task<Client?> CreateClient(Client data)
+    public async Task<Client> UpdateClientUserName(long clientId, string newUsername)
     {
-        var client = await _clientDataService.GetById(data.ClientId);
+        var client = await _clientDataService.GetByIdAsync(clientId);
         if (client is null)
-        {
-           await _clientDataService.Insert(data);
-           return data;
-        }
-
-        return client;
+            throw new Exception("Client not found!");
+        client.UserName = newUsername;
+        return await _clientDataService.UpdateAsync(client);
     }
 
-    public async Task<Client?> RemoveClient(Client data)
+    public async Task<Client> UpdateClientNickName(long clientId, string newNickname)
     {
-       var client=await _clientDataService.Update(data);
-       return client;
-    }
-
-    public async Task<Client?> FindClient(long clientId)
-    {
-        var client =await _clientDataService.GetById(clientId);
-        return client;
-    }
-
-    public async Task<Client?> UpdateClient(Client data)
-    {
-        var client =await _clientDataService.Update(data);
-        return client;
-    }
-
-    public async Task<int> UpdateClientUserName(Client data)
-    {
-        var client = await _clientDataService.UpdateUserName(data);
-        return client;
-    }
-
-    public async Task<int> UpdateClientNickName(Client data)
-    {
-        var client = await _clientDataService.UpdateNickName(data);
-        return client;
+        var client = await _clientDataService.GetByIdAsync(clientId);
+        if (client is null)
+            throw new Exception("Client not found!");
+        client.Nickname = newNickname;
+        return await _clientDataService.UpdateAsync(client);
     }
 
 }

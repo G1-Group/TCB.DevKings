@@ -1,6 +1,7 @@
 ﻿using TCBApp.Models;
 using TCBApp.Models.Enums;
 using TCBApp.Services;
+using TCBApp.Services.DataService;
 using TCBApp.TelegramBot.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -57,7 +58,7 @@ public class ConversationsController : ControllerBase
                     ToId = clientSecond.Session.ClientId!.Value,
                     State = ChatState.Opened,
                 };
-                newChatModel = await _conversationDataService.Insert(newChatModel);
+                newChatModel = await _conversationDataService.AddAsync(newChatModel);
 
                 await clientFirst.SendBoldTextMessage("Starting Conversation, please write !");
                 await clientSecond.SendBoldTextMessage("Starting Conversation, please write !");

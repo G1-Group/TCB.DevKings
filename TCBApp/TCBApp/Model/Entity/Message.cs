@@ -1,20 +1,33 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using TCBApp.Models.Enums;
 
 namespace TCBApp.Models;
 
-public class Message
+[Table("messages")]
+public class Message : ModelBase
 {
-    [Description("from_id")]
+    [Column("from_id")]
     public long FromId { get; set; }
-    [Description("message")]
-    public object _Message { get; set; }
-    [Description("chat_id")]
-    public long ChatId { get; set; }
-    [Description("board_id")]
-    public long BoardId { get; set; }
-    [Description("message_type")]
+    
+    [NotMapped]
+    public Client Client { get; set; }
+    
+    [Column("content")]
+    public Telegram.Bot.Types.Message Content { get; set; }
+    [Column("conversation_id")]
+    public long? ConversationId { get; set; }
+    [NotMapped]
+    public ChatModel? Conversation { get; set; }
+    
+    [Column("board_id")]
+    public long? BoardId { get; set; }
+    [NotMapped]
+    public BoardModel? Board { get; set; }
+    
+    [Column("message_type")]
     public MessageType MessageType { get; set; }
-    [Description("message_status")]
+    [Column("message_status")]
     public MessageStatus MessageStatus { get; set; }
 }

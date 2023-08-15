@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TCBApp.Models;
 using TCBApp.Services;
 using TCBApp.Services.DataContexts;
+using TCBApp.Services.DataService;
 using TCBApp.TelegramBot.Controllers;
 using Telegram.Bot;
 
@@ -23,16 +24,22 @@ public class ControllerManager
 
     // private BoardController BoardController;
     // private ConversationController ConversationController;
-    public ControllerManager(UserDataService dataService, ClientDataService clientDataService, AuthService authService, BoardService boardService  )
+    public ControllerManager(
+        UserDataService dataService, 
+        ClientDataService clientDataService, 
+        AuthService authService, 
+        BoardService boardService,
+        MessageDataService messageDataService,
+        ConversationDataService conversationDataService)
     {
-        MessageDataService = new MessageDataService(Settings.dbConnectionString);
+        MessageDataService = messageDataService;
         this._homeController = new HomeController(this);
         this._authController = new AuthController(authService, this);
         this._clientDashboardController = new ClientDashboardController(this, clientDataService);
         _messageService = new MessageService(MessageDataService);
         this._boardController = new BoardController(this, boardService,_messageService);
         DataContext = new DataContext();
-        _conversationsController = new ConversationsController(this,new ConversationDataService(Settings.dbConnectionString));
+        _conversationsController = new ConversationsController(this,conversationDataService);
         this._homeController = new HomeController(this);
         this._authController = new AuthController(authService, this);
         this._clientDashboardController = new ClientDashboardController(this, clientDataService);

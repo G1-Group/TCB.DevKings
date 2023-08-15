@@ -1,5 +1,6 @@
 ﻿using TCBApp.Models;
 using TCBApp.Services;
+using TCBApp.Services.DataService;
 using TCBApp.TelegramBot.Extensions;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -17,9 +18,9 @@ public class ClientInfoController :ControllerBase
 
     public async Task Index(UserControllerContext context)
     {
-        var client = await _clientDataService.GetByIdFull(context.Session.ClientId.Value);
+        var client = await _clientDataService.GetByIdAsync(context.Session.ClientId.Value);
         
-        await context.SendBoldTextMessage(client!,new ReplyKeyboardMarkup(new KeyboardButton("Back"))
+        await context.SendBoldTextMessage(client.Nickname,new ReplyKeyboardMarkup(new KeyboardButton("Back"))
         {
             ResizeKeyboard = true,
             OneTimeKeyboard = true

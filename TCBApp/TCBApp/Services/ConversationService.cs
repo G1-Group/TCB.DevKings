@@ -1,15 +1,17 @@
 ﻿using TCBApp.Interface;
 using TCBApp.Models;
+using TCBApp.Models.Enums;
+using TCBApp.Services.DataService;
 
 namespace TCBApp.Services;
 
-public class ConversationService:IConversationInterface
+public class ConversationService : IConversationService
 {
-    private ConversationDataService Service { get; set; }
+    private readonly ConversationDataService _conversationDataService;
 
-    public ConversationService()
+    public ConversationService(ConversationDataService conversationDataService)
     {
-        // Service = new ConversationDataService(DBConnection.connection);
+        _conversationDataService = conversationDataService;
     }
 
 
@@ -18,28 +20,16 @@ public class ConversationService:IConversationInterface
         throw new NotImplementedException();
     }
 
-    public ChatModel StopConversation(long chatId)
+    public async Task StopConversation(long chatId)
     {
-        return Service.StopConversation( chatId).Result;
-    }
-
-    public ChatModel GetLastConversation(long chatId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ChatModel UpdateConversation(ChatModel chat)
-    {
-        return Service.UpdateConversation(chat.Id, chat).Result;
-    }
-
-    public ChatModel GetConversation(long chatId)
-    {
-        return Service.GetById(chatId).Result;
-    }
-
-    public List<ChatModel> GetAllConversation()
-    {
-        return Service.GetAll().Result;
+        var conversation = await this
+            ._conversationDataService
+            .GetByIdAsync(chatId);
+        
+        if (conversation is null)
+            throw new Exception("Conversation not found!");
+        
+        conversation.State = ChatState.Closed;
+        await _conversationDataService.UpdateAsync(conversation);
     }
 }

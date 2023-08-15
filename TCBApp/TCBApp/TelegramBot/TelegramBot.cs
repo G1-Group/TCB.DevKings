@@ -1,5 +1,6 @@
 ﻿using TCBApp.Services;
 using TCBApp.Services.DataContexts;
+using TCBApp.Services.DataService;
 using TCBApp.TelegramBot.Controllers;
 using TCBApp.TelegramBot.Extensions;
 using TCBApp.TelegramBot.Managers;
@@ -17,6 +18,9 @@ public class TelegramBot
     private readonly UserDataService _userDataService;
     private readonly AuthService _authService;
     private readonly BoardService _boardService;
+    private readonly BoardDataService _boardDataService;
+    private readonly MessageDataService _messageDataSerice;
+    private readonly ConversationDataService _conversationDataService;
     public static TelegramBotClient _client { get; set; }
 
     private DataContext DataContext { get; set; }
@@ -30,12 +34,24 @@ public class TelegramBot
     {
         DataContext = new DataContext();
         _client = new TelegramBotClient(Settings.botToken);
-        _userDataService = new UserDataService(Settings.dbConnectionString);
-        _clientDataService = new ClientDataService(Settings.dbConnectionString);
-        _authService = new AuthService(_userDataService, _clientDataService,DataContext);
-        _boardService = new BoardService(Settings.dbConnectionString);
+        
+        _userDataService = new UserDataService(DataContext);
+        _clientDataService = new ClientDataService(DataContext);
+        _boardDataService = new BoardDataService(DataContext);
+        _messageDataSerice = new MessageDataService(DataContext);
+        _conversationDataService = new ConversationDataService(DataContext);
+        
+        _authService = new AuthService(_userDataService, _clientDataService);
+        _boardService = new BoardService(_boardDataService, _messageDataSerice);
+        
         ControllerManager =
-            new ControllerManager.ControllerManager(_userDataService, _clientDataService, _authService, _boardService);
+            new ControllerManager.ControllerManager(
+                _userDataService, 
+                _clientDataService,
+                _authService,
+                _boardService,
+                _messageDataSerice,
+                _conversationDataService);
         SessionManager = new SessionManager(_userDataService);
 
         updateHandlers = new List<Func<UserControllerContext, CancellationToken, Task>>();
@@ -102,12 +118,20 @@ public class TelegramBot
 
         try
         {
-            foreach (var updateHandler in this.updateHandlers)
-                await updateHandler(context, token);
+                foreach (var updateHandler in this.updateHandlers)
+                    await updateHandler(context, token);
         }
         catch (Exception e)
         {
-            Console.WriteLine("Handler Error: " + e.Message);
+            if (context.Session is not null)
+                context.Session.Action = "Index";
+            string errorMessage = ("Handler Error: " + e.Message 
+                                                + "\nInner exception message: " 
+                                                + e.InnerException?.Message
+                                                // + "\nStack trace: " + e.StackTrace
+                                                );
+            Console.WriteLine(errorMessage + "\nStackTrace: " + e.StackTrace);
+            await context.SendErrorMessage(errorMessage, 500);
         }
     }
 

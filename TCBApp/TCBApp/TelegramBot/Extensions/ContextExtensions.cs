@@ -1,7 +1,5 @@
-using System.Runtime.CompilerServices;
 using TCBApp.TelegramBot.Controllers;
 using Telegram.Bot;
-using Telegram.Bot.Extensions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -39,12 +37,12 @@ public static class ContextExtensions
             500 => "5️⃣0️⃣0️⃣",
             _ => "4️⃣0️⃣4️⃣"
         };
-        return await context.SendTextMessage($"<b>{codeText} {text ?? "Not found!"}</b>", parseMode: ParseMode.Html);
+        return await context.SendTextMessage($"<b><code>{codeText} {text ?? "Not found!"}</code></b>", parseMode: ParseMode.Html);
     }
     
     public static async Task<Message> SendBoldTextMessage(this UserControllerContext context, string text, IReplyMarkup? replyMarkup = null, ParseMode? parseMode = null)
     {
-        return await context.SendTextMessage($"<b>{text}</b>", parseMode: parseMode ?? ParseMode.Html, replyMarkup: replyMarkup);
+        return await context.SendTextMessage($"<b>{(string.IsNullOrEmpty(text) ? "Empty" : text)}</b>", parseMode: parseMode ?? ParseMode.Html, replyMarkup: replyMarkup);
     }
     
     
