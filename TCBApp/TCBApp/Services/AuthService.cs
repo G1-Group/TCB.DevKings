@@ -57,12 +57,15 @@ public class AuthService : IAuthService
             .FirstOrDefault(item => 
                 item.Password == user.Password
                 && item.PhoneNumber == user.Login);
-    
+
+        // if (userInfo is null)
+        //     throw new Exception("User not found");
+        
         if (userInfo is User)
         {
-            return await _clientDataService.GetAll().FirstOrDefaultAsync(x => x.UserId == userInfo.Id);
+            return userInfo.Client;
         }
-    
+
         return null;
     }
 }

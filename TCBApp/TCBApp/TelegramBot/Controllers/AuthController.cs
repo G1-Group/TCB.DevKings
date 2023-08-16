@@ -12,12 +12,7 @@ namespace TCBApp.TelegramBot.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly AuthService _authService;
-
-    private string login = null;
-    private string phonenumber = null;
-    private string password;
-
-
+    
     public AuthController(AuthService authService, ControllerManager.ControllerManager controllerManager) : base(
         controllerManager)
     {
@@ -29,20 +24,22 @@ public class AuthController : ControllerBase
         await context.SendBoldTextMessage("Please enter phone number : ",
             context.RequesPhoheNumberReplyKeyboardMarkup());
 
+        context.Session.LoginData = new LoginSessionModel();
         context.Session.Action = nameof(LoginUserLogin);
     }
 
     private async Task LoginUserLogin(UserControllerContext context)
     {
-        login = message?.Contact?.PhoneNumber;
-        if (!login.StartsWith("+"))
-            login = "+" + login;
+        var login = context.Message?.Contact?.PhoneNumber;
         if (login is null)
         {
             await context.SendErrorMessage("Wrong phone number!", 400);
             return;
         }
 
+        if (!login.StartsWith("+"))
+            login = "+" + login;
+        context.Session.LoginData.Login = login;
         await context.SendBoldTextMessage("Enter your password : ");
         context.Session.Action = nameof(LoginUserPassword);
     }
@@ -52,9 +49,10 @@ public class AuthController : ControllerBase
         var password = context.Update.Message.Text;
         var client = await _authService.Login(new UserLoginModel()
         {
-            Login = login,
+            Login = context.Session.LoginData.Login,
             Password = password
         });
+        context.Session.LoginData = null;
         if (client is not null)
         {
             context.Session.ClientId = client.Id;
@@ -82,14 +80,15 @@ public class AuthController : ControllerBase
 
     public async Task RegistrationPhoneNumber(UserControllerContext context)
     {
-        var phoneNumber = message?.Contact?.PhoneNumber;
-        if (!phoneNumber.StartsWith("+"))
-            phoneNumber = "+" + phoneNumber;
+        var phoneNumber = context.Message?.Contact?.PhoneNumber;
         if (phoneNumber is null)
         {
             await context.SendErrorMessage("Wrong phone number!", 400);
             return;
         }
+        
+        if (!phoneNumber.StartsWith("+"))
+            phoneNumber = "+" + phoneNumber;
         
         context.Session.RegistrationModel.PhoneNumber = phoneNumber;
         await context.SendTextMessage("Please Enter your password: ");

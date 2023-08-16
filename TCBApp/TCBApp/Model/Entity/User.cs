@@ -15,5 +15,5 @@ public class User : ModelBase
 
     //relation
     [NotMapped]
-    public Client Client { get; set; }
+    public virtual Client Client { get; set; }
 }

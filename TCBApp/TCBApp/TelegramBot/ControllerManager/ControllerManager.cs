@@ -4,6 +4,7 @@ using TCBApp.Services;
 using TCBApp.Services.DataContexts;
 using TCBApp.Services.DataService;
 using TCBApp.TelegramBot.Controllers;
+using TCBApp.TelegramBot.Managers;
 using Telegram.Bot;
 
 namespace TCBApp.TelegramBot.ControllerManager;
@@ -16,6 +17,7 @@ public class ControllerManager
     private readonly ClientDashboardController _clientDashboardController;
     private readonly BoardController _boardController;
     private readonly MessageDataService MessageDataService;
+    private readonly SessionManager _sessionManager;
     private MessageService _messageService;
     private DataContext DataContext;
     private readonly ConversationsController _conversationsController;
@@ -30,16 +32,18 @@ public class ControllerManager
         AuthService authService, 
         BoardService boardService,
         MessageDataService messageDataService,
-        ConversationDataService conversationDataService)
+        ConversationDataService conversationDataService,
+        SessionManager sessionManager)
     {
         MessageDataService = messageDataService;
+        _sessionManager = sessionManager;
         this._homeController = new HomeController(this);
         this._authController = new AuthController(authService, this);
         this._clientDashboardController = new ClientDashboardController(this, clientDataService);
         _messageService = new MessageService(MessageDataService);
         this._boardController = new BoardController(this, boardService,_messageService);
         DataContext = new DataContext();
-        _conversationsController = new ConversationsController(this,conversationDataService);
+        _conversationsController = new ConversationsController(this,conversationDataService, _sessionManager);
         this._homeController = new HomeController(this);
         this._authController = new AuthController(authService, this);
         this._clientDashboardController = new ClientDashboardController(this, clientDataService);
