@@ -1,6 +1,7 @@
 using System.Net.Security;
 using TCBApp.Models;
 using TCBApp.Services;
+using TCBApp.Services.DataService;
 using TCBApp.TelegramBot.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
@@ -21,7 +22,7 @@ public class ClientDashboardController : ControllerBase
     {
         Client? client = null;
         if (context.Session.ClientId != null)
-             client = await _clientDataService.GetById(context.Session.ClientId!.Value);
+             client = await _clientDataService.GetByIdAsync(context.Session.ClientId!.Value);
 
         if (client is not null)
         {

@@ -1,13 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using TCBApp.Models;
-using User = Telegram.Bot.Types.User;
 
 namespace TCBApp.Services.DataContexts;
 
 public class DataContext:DbContext
 {
-    public DbSet<Models.User> users { get; set; }
-    public DbSet<Models.Client> clients { get; set; }
+    public DbSet<User> Users { get; set; }
+    public DbSet<Client> Clients { get; set; }
+    public DbSet<Message> Messages { get; set; }
+    public DbSet<ChatModel> Chats { get; set; }
+    public DbSet<BoardModel> Boards { get; set; }
 
     public DataContext()
     {
@@ -15,49 +17,69 @@ public class DataContext:DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql("Host=localhost; Port=5432; Database=postgres; username=postgres; password=3214");
+        optionsBuilder.UseNpgsql(Settings.dbConnectionString);
         base.OnConfiguring(optionsBuilder);
     }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<User>().HasKey(x => x.Id);
+
+        modelBuilder
+            .HasDefaultSchema("tgbot");
         
         modelBuilder
-            .Entity<Models.User>()
-            .Property(x => x.Password)
-            .IsRequired()
-            .HasColumnName("password")
-            .HasDefaultValue(null);
-        
-        modelBuilder.Entity<User>().HasKey(x => x.Id);
-        
-        modelBuilder
-            .Entity<Models.Client>()
-            .Property(x => x.Nickname)
-            .IsRequired()
-            .HasColumnName("nickname")
-            .HasDefaultValue(null);
+            .Entity<Message>()
+            .Property(x => x.Content)
+            .HasColumnType("jsonb");
         
         modelBuilder
             .Entity<Models.User>()
             .HasIndex(x => x.PhoneNumber)
             .IsUnique();
+
+        modelBuilder
+            .Entity<Message>()
+            .HasOne(x => x.Client)
+            .WithMany(x => x.Messages)
+            .HasForeignKey(x => x.FromId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder
+            .Entity<Message>()
+            .HasOne(x => x.Conversation)
+            .WithMany(x => x.Messages)
+            .HasForeignKey(x => x.ConversationId);
         
         modelBuilder
-            .Entity<Models.User>()
-            .HasIndex(x => x.UserId)
-            .IsUnique();
+            .Entity<Message>()
+            .HasOne(x => x.Board)
+            .WithMany(x => x.Messages)
+            .HasForeignKey(x => x.BoardId);
+
+        modelBuilder
+            .Entity<Client>()
+            .HasOne(x => x.User)
+            .WithOne(x => x.Client)
+            .HasForeignKey<Client>(x => x.UserId);
+
+        modelBuilder
+            .Entity<Client>()
+            .HasMany(x => x.Boards)
+            .WithOne(x => x.Owner)
+            .HasForeignKey(x => x.OwnerId);
+
+        modelBuilder
+            .Entity<Client>()
+            .HasMany(x => x.FromConversations)
+            .WithOne(x => x.From)
+            .HasForeignKey(x => x.FromId);
         
-         modelBuilder
-            .Entity<Models.User>()
-            .Property(x => x.Password)
-            .HasConversion(
-                s => s.ToString(),
-                s => s.ToString());
-       
+        modelBuilder
+            .Entity<Client>()
+            .HasMany(x => x.ToConversations)
+            .WithOne(x => x.To)
+            .HasForeignKey(x => x.ToId);
     }
    
 }

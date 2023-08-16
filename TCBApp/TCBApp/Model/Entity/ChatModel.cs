@@ -1,16 +1,26 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using TCBApp.Models;
 using TCBApp.Models.Enums;
 
-public class ChatModel
+[Table("chats")]
+public class ChatModel : ModelBase
 {
-    [Description("created_date")]
+    [Column("created_date")]
     public DateTime CreatedDate { get; set; }
-    [Description("from_id")]
+    [Column("from_id")]
     public long FromId { get; set; }
-    [Description("to_id")]
+    [NotMapped]
+    public Client From { get; set; }
+    [Column("to_id")]
     public long ToId { get; set; }
-    [Description("state")]
+    [NotMapped]
+    public Client To { get; set; }
+    
+    [Column("state")]
     public ChatState State { get; set; }
-    [Description("chat_id")]
-    public long Id { get; set; }
+
+    [NotMapped]
+    public List<Message> Messages { get; set; }
+    
 }

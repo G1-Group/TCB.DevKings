@@ -1,7 +1,11 @@
-﻿using TCBApp.Models;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using TCBApp.Models;
 using TCBApp.Models.Enums;
 using TCBApp.Services;
+using TCBApp.Services.DataService;
 using TCBApp.TelegramBot.Extensions;
+using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
@@ -19,7 +23,7 @@ public class BoardController:ControllerBase
     {
         _messageService = messageService;
         _boardService = boardService;
-        _boardDataService = boardService.boardDataService;
+        _boardDataService = boardService._boardDataService;
     }
 
     public async Task FindBoardStart(UserControllerContext context)
@@ -36,7 +40,7 @@ public class BoardController:ControllerBase
             await context.SendTextMessage("Board topildi.",context.FindBoardNickNameReplyKeyboardMarkup());
             context.Session.BoardData = new BoardSessionModel();
             context.Session.BoardData.NewBoardNickName = result.NickName;
-            context.Session.BoardData.BoardId = result.BoardId;
+            context.Session.BoardData.BoardId = result.Id;
             
         }
         else
@@ -61,18 +65,14 @@ public class BoardController:ControllerBase
     {
         Console.WriteLine(nameof(SendMessageToBoard));
         context.Session.Action = nameof(MyBoards);
-       var res=  _messageService.SendMessageToBoard(new Message
-        {
-            FromId = context.Session.ClientId.Value,
-            _Message = context.Update.Message.Text,
-            ChatId = 1,
-            BoardId = context.Session.BoardData.BoardId,
-            MessageType = Models.Enums.MessageType.BoardMessage,
-            MessageStatus = MessageStatus.NotRead
-        }).Result;
-       if (res == 1)
+        var res = await _messageService.SendMessageToBoard(new SendMessageToBoardViewModel(
+            BoardId: context.Session.BoardData.BoardId,
+            FromId: context.Session.ClientId.Value,
+            Content: context.Update.Message
+        ));
+        
+       if (res is Message)
          await  context.SendTextMessage("Xabar yuborildi✅",context.FindBoardNickNameReplyKeyboardMarkup());
-       
        else
         await   context.SendTextMessage("Xabar yuborilmadi.Xatolik yuz bedi❌",context.FindBoardNickNameReplyKeyboardMarkup());
         
@@ -87,15 +87,18 @@ public class BoardController:ControllerBase
 
     public async Task MyBoards(UserControllerContext context)
     {
-        var allBoards = await _boardDataService.GetAllByOwnerId(context.Session.ClientId.Value);
+        var allBoardsQuery =  _boardDataService.GetAll()
+            .Where(x =>
+                x.OwnerId == context.Session.ClientId!.Value);
 
-        if (allBoards.Count == 0)
+        if (!(await allBoardsQuery.AnyAsync()))
         {
             context.Session.Action = nameof(HandleUpdate);
             await context.SendBoldTextMessage("Sizda hali boardlar mavjud emas🤷‍♂️", replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
             return;
         }
-        
+
+        var allBoards = await allBoardsQuery.ToListAsync();
         string message = $"All boards count: {allBoards.Count};\n";
         
         message += string.Join(
@@ -133,7 +136,11 @@ public class BoardController:ControllerBase
         {
             foreach (Message m in res)
             {
-                 context.SendTextMessage($"{m._Message.ToString()}").Wait();
+                var tgMessage = m.Content;
+                if (tgMessage.Type == MessageType.Text)
+                    await context.SendTextMessage($"{tgMessage.Text}");
+                else
+                    await context.SendBoldTextMessage($"No content!");
             }
         }
         else

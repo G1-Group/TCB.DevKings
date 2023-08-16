@@ -1,19 +1,24 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using TCBApp.Models.Enums;
 
 namespace TCBApp.Models;
 
-public class BoardModel
+[Table("boards")]
+public class BoardModel : ModelBase
 {
-    [Description("board_id")]
-    public long BoardId { get; set; }
-    
-    [Description("nickname")]
+    [Column("nickname")]
     public string NickName { get; set; }
     
-    [Description("owner_id")]
+    [Column("owner_id")]
     public long OwnerId { get; set; }
+    [NotMapped]
+    public Client Owner { get; set; }
     
-    [Description("board_status")]
+    [Column("board_status")]
     public BoardStatus BoardStatus { get; set; }
+    
+    [NotMapped]
+    public List<Message> Messages { get; set; }
+
 }

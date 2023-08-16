@@ -1,33 +1,33 @@
+using Microsoft.EntityFrameworkCore;
 using TCBApp.Interface;
 using TCBApp.Models;
-using Telegram.Bot.Types;
+using TCBApp.Models.Enums;
+using TCBApp.Services.DataService;
 using Message = TCBApp.Models.Message;
 
 namespace TCBApp.Services;
 
-public class BoardService:IBoardInterface
+public class BoardService : IBoardService
 {
 
-    public readonly BoardDataService boardDataService;
-    public readonly MessageDataService messageDataService;
+    public readonly BoardDataService _boardDataService;
+    public readonly MessageDataService _messageDataService;
 
-    public BoardService(string connectionString)
+    public BoardService(BoardDataService boardDataService, MessageDataService messageDataService)
     {
-        boardDataService = new BoardDataService(connectionString);
-        messageDataService = new MessageDataService(connectionString);
+        _boardDataService = boardDataService;
+        _messageDataService = messageDataService;
     }
  
 
-    public Task<int> CreateBoard(BoardModel boardModel)
-
+    public async Task<BoardModel> CreateBoard(BoardModel boardModel)
     {
-        return  boardDataService.Insert(boardModel);
+        return  await _boardDataService.AddAsync(boardModel);
     }
 
     public async Task<List<Message>> GetBoardMessages(long boardId)
     {
-        var res = messageDataService.GetByIdFromBoard(boardId).Result;
-        return res;
+        return await _messageDataService.GetAll().Where(x => x.BoardId == boardId).ToListAsync();
     }
     public async Task<BoardModel> CreateNewBoard(long ownerId,string nickName)
     {
@@ -36,49 +36,44 @@ public class BoardService:IBoardInterface
            OwnerId = ownerId,
            NickName = nickName
         };
-         boardDataService.Insert(boardModel);
-         throw new Exception("Error CreateNewBoard@ ");
+         var insertedBoard = await _boardDataService.AddAsync(boardModel);
+         if (insertedBoard is BoardModel)
+             return insertedBoard;
+
+         throw new Exception("Unable to create new board");
     }
     
-    public async Task<Message>ChangeBoardMessageStatus(long messageId,Message message)
+    // public async Task<Message> ChangeBoardMessageStatus(long messageId, MessageStatus messageStatus)
+    // {
+    //     return _messageDataService.UpdateMessage(messageId, message).Result;
+    // }
+
+    public async Task SetMessageStatusAsRead(long messageId)
     {
-        return messageDataService.UpdateMessage(messageId, message).Result;
+        var message = await _messageDataService
+            .GetByIdAsync(messageId);
+
+        if (message is null)
+            throw new Exception("Message not found");
+        
+        message.MessageStatus = MessageStatus.Read;
+
+        await _messageDataService.UpdateAsync(message);
     }
 
-    public async Task<BoardModel> StopBoard(long boardId)
+    public async Task<List<BoardModel>> GetBoardFromUserId(long userId)
     {
-        return boardDataService.DeleteBoard(boardId).Result;
+        return await _boardDataService.GetAll()
+            .Where(x => x.OwnerId == userId)
+            .ToListAsync();
     }
-
-    public async Task<BoardModel> DeleteBoard(long id)
-    {
-        return boardDataService.DeleteBoard(id).Result;
-    }
-
-    public List<BoardModel> GetBoardFromUserId(long userId)
-    {
-        var list = GetAllBoards();
-        return list.Result.Where(x => x.OwnerId == userId).ToList();
-    }
-
-    public async Task<BoardModel> UpdateBoard(long boardId,BoardModel boardModel)
-    {
-        return boardDataService.UpdateBoard(boardId,boardModel).Result;
-    }
-
-    public async Task<BoardModel> GetBoard(long boardId)
-    {
-        return boardDataService.GetById(boardId).Result;
-    }
-
-    public async Task<List<BoardModel>> GetAllBoards()
-    {
-        return boardDataService.GetAll().Result;
-    }
+    
 
     public async Task<BoardModel?> FindBoardByNickName(string nickName)
     {
-        return await boardDataService.GetByNickname(nickName);
+        return await _boardDataService
+            .GetAll()
+            .FirstOrDefaultAsync(x => x.NickName == nickName);
     }
 }
    

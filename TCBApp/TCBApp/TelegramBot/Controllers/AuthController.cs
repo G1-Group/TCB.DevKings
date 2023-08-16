@@ -3,6 +3,7 @@ using TCBApp.Models;
 using TCBApp.Services;
 using TCBApp.TelegramBot.Extensions;
 using Telegram.Bot;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -33,7 +34,14 @@ public class AuthController : ControllerBase
 
     private async Task LoginUserLogin(UserControllerContext context)
     {
-        login = context.Update.Message!.Contact!.PhoneNumber;
+        login = message?.Contact?.PhoneNumber;
+        if (!login.StartsWith("+"))
+            login = "+" + login;
+        if (login is null)
+        {
+            await context.SendErrorMessage("Wrong phone number!", 400);
+            return;
+        }
 
         await context.SendBoldTextMessage("Enter your password : ");
         context.Session.Action = nameof(LoginUserPassword);
@@ -49,10 +57,10 @@ public class AuthController : ControllerBase
         });
         if (client is not null)
         {
-            context.Session.ClientId = client.ClientId;
+            context.Session.ClientId = client.Id;
             context.Session.Controller = nameof(ClientDashboardController);
             context.Session.Action = nameof(ClientDashboardController.Index);
-
+        
             await context.Forward(this._controllerManager);
             return;
         }
@@ -74,7 +82,16 @@ public class AuthController : ControllerBase
 
     public async Task RegistrationPhoneNumber(UserControllerContext context)
     {
-        context.Session.RegistrationModel.PhoneNumber = context.Update.Message.Contact.PhoneNumber;
+        var phoneNumber = message?.Contact?.PhoneNumber;
+        if (!phoneNumber.StartsWith("+"))
+            phoneNumber = "+" + phoneNumber;
+        if (phoneNumber is null)
+        {
+            await context.SendErrorMessage("Wrong phone number!", 400);
+            return;
+        }
+        
+        context.Session.RegistrationModel.PhoneNumber = phoneNumber;
         await context.SendTextMessage("Please Enter your password: ");
         context.Session.Action = nameof(RegistrationPassword);
     }

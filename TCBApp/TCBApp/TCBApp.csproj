@@ -20,6 +20,13 @@
 
     <ItemGroup>
       <Compile Remove="TelegramBot\Controllers\ClientController.cs" />
+      <Compile Remove="Services\DBServices\BoardDataService.cs" />
+      <Compile Remove="Services\DBServices\ClientDataService.cs" />
+      <Compile Remove="Services\DBServices\ConversationDataService.cs" />
+      <Compile Remove="Services\DBServices\DataProvider.cs" />
+      <Compile Remove="Services\DBServices\MessageDataService.cs" />
+      <Compile Remove="Services\DBServices\UserDataService.cs" />
+      <Compile Remove="Services\DataService\DataProvider.cs" />
     </ItemGroup>
 
 
