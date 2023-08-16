@@ -33,7 +33,7 @@ public class MessageService : IMessageService
     {
         return await _messageDataService
             .GetAll()
-            .Where(x => x.BoardId == boardId)
+            .Where(x => x.BoardId == boardId && x.MessageStatus == MessageStatus.NotRead)
             .ToListAsync();
     }
     

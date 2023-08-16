@@ -45,7 +45,13 @@ public class BoardService : IBoardService
     
     // public async Task<Message> ChangeBoardMessageStatus(long messageId, MessageStatus messageStatus)
     // {
-    //     return _messageDataService.UpdateMessage(messageId, message).Result;
+    //     var message = await _messageDataService.GetByIdAsync(messageId);
+    //     if (message is null)
+    //     {
+    //         throw new Exception("Board not found");
+    //     }
+    //     message.MessageStatus = messageStatus;
+    //     return await _messageDataService.UpdateAsync(message);
     // }
 
     public async Task SetMessageStatusAsRead(long messageId)
