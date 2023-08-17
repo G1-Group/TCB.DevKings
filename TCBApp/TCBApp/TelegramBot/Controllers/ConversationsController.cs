@@ -9,6 +9,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using Message = TCBApp.Models.Message;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
 namespace TCBApp.TelegramBot.Controllers;
@@ -18,10 +19,12 @@ public class ConversationsController : ControllerBase
     private readonly ConversationDataService _conversationDataService;
     private readonly ISessionManager<Session> _sessionManager;
     private readonly Queue<long> waitingClients = new Queue<long>();
+    private readonly MessageService _messageService;
 
     public ConversationsController(ControllerManager.ControllerManager controllerManager,
-        ConversationDataService conversationDataService, ISessionManager<Session> sessionManager) : base(controllerManager)
+        ConversationDataService conversationDataService, ISessionManager<Session> sessionManager,MessageService messageService) : base(controllerManager)
     {
+        _messageService = messageService;
         _conversationDataService = conversationDataService;
         _sessionManager = sessionManager;
     }
@@ -113,7 +116,11 @@ public class ConversationsController : ControllerBase
             conversation.From.Id == context.Session.ClientId
                 ? conversation.From
                 : conversation.To;
-        
+        var sendMessageToConversationViewModel = new SendMessageToConversationViewModel(
+            from.Id, to.Id, conversation.Id,context.Message);
+
+
+        await _messageService.SendMessageToConversation(sendMessageToConversationViewModel);
         await _botClient.CopyMessageAsync(to.User.TelegramClientId, from.User.TelegramClientId, message.MessageId);
     }
 

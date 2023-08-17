@@ -9,4 +9,6 @@ public class MessageDataService : DataServiceBase<Message>
     public MessageDataService(DataContext context) : base(context)
     {
     }
+
+ 
 }

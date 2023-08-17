@@ -43,7 +43,7 @@ public class ControllerManager
         _messageService = new MessageService(MessageDataService);
         this._boardController = new BoardController(this, boardService,_messageService);
         DataContext = new DataContext();
-        _conversationsController = new ConversationsController(this,conversationDataService, _sessionManager);
+        _conversationsController = new ConversationsController(this,conversationDataService, _sessionManager,_messageService);
         this._homeController = new HomeController(this);
         this._authController = new AuthController(authService, this);
         this._clientDashboardController = new ClientDashboardController(this, clientDataService);

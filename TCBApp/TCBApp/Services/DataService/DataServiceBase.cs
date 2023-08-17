@@ -6,7 +6,7 @@ namespace TCBApp.Services.DataService;
 
 public abstract class DataServiceBase<T> : IDataServiceBase<T> where T: ModelBase
 {
-    private readonly DbContext _context;
+    protected readonly DbContext _context;
 
     public DataServiceBase(DbContext context)
     {

@@ -36,5 +36,23 @@ public class MessageService : IMessageService
             .Where(x => x.BoardId == boardId && x.MessageStatus == MessageStatus.NotRead)
             .ToListAsync();
     }
-    
+
+    public Task<Message> SendMessageToConversation(SendMessageToConversationViewModel model)
+    {
+        var message = new Message
+        {
+            FromId = model.FromId,
+            Client = null,
+            Content = model.Content,
+            ConversationId = model.ConversationId,
+            Conversation = null,
+            BoardId = null,
+            Board = null,
+            MessageType = MessageType.AnonymChatMessage,
+            MessageStatus = MessageStatus.NotRead
+        };
+     return  _messageDataService.AddAsync(message);
+    }
+
+   
 }
