@@ -6,4 +6,6 @@ public interface IMessageService
 {
     Task<Message> SendMessageToBoard(SendMessageToBoardViewModel model);
     Task<List<Message>> GetBoardMessages(long boardId);
+    Task<Message> SendMessageToConversation(SendMessageToConversationViewModel model);
+    
 }
