@@ -107,14 +107,23 @@ public static class KeyboardButtonExtensions
         {
             new List<KeyboardButton>()
             {
-                new KeyboardButton("Start Conversation"),
-                new KeyboardButton("Back")
+                new KeyboardButton("start"),
+            },
+            new List<KeyboardButton>()
+            {
+                new KeyboardButton("history"),
+                new KeyboardButton("back")
             }
         };
 
         return MakeDefaultReplyKeyboardMarkup(buttons);
     }
-
+    
+    
     public static ReplyKeyboardMarkup Back(this UserControllerContext context)
         => MakeDefaultReplyKeyboardMarkup(new KeyboardButton("Back"));
+    public static ReplyKeyboardMarkup StopConversationReplyKeyboardMarkup(this UserControllerContext context)
+        => MakeDefaultReplyKeyboardMarkup(new KeyboardButton("stop"));
+
+    
 }

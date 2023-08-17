@@ -1,4 +1,5 @@
-﻿using TCBApp.Services;
+﻿using CloneExtensions;
+using TCBApp.Services;
 using TCBApp.Services.DataContexts;
 using TCBApp.Services.DataService;
 using TCBApp.TelegramBot.Controllers;
@@ -44,6 +45,8 @@ public class TelegramBot
         _authService = new AuthService(_userDataService, _clientDataService);
         _boardService = new BoardService(_boardDataService, _messageDataSerice);
         
+        SessionManager = new SessionManager(_userDataService);
+        
         ControllerManager =
             new ControllerManager.ControllerManager(
                 _userDataService, 
@@ -51,8 +54,8 @@ public class TelegramBot
                 _authService,
                 _boardService,
                 _messageDataSerice,
-                _conversationDataService);
-        SessionManager = new SessionManager(_userDataService);
+                _conversationDataService,
+                SessionManager);
 
         updateHandlers = new List<Func<UserControllerContext, CancellationToken, Task>>();
     }
@@ -69,7 +72,6 @@ public class TelegramBot
             context.Session = session;
             context.TerminateSession = async () => await this.SessionManager.TerminateSession(context.Session);
         });
-
         //Log handler
         this.updateHandlers.Add(async (context, token) =>
         {
@@ -103,17 +105,17 @@ public class TelegramBot
     {
         var cancellationToken = new CancellationToken();
         var options = new ReceiverOptions();
-        _client.StartReceiving(OnUpdate, ErrorMessage, options, cancellationToken);
-
+        _client.StartReceiving(OnUpdate, ErrorMessage, options, CancellationToken.None);
         Console.WriteLine("{0} | Bot is starting...", DateTime.Now);
         Console.ReadKey();
     }
+
 
     private async Task OnUpdate(ITelegramBotClient bot, Update update, CancellationToken token)
     {
         UserControllerContext context = new UserControllerContext()
         {
-            Update = update
+            Update = update.GetClone()
         };
 
         try
@@ -123,11 +125,11 @@ public class TelegramBot
         }
         catch (Exception e)
         {
-            if (context.Session is not null)
-                context.Session.Action = "Index";
+            context.Reset();
+            
             string errorMessage = ("Handler Error: " + e.Message 
-                                                + "\nInner exception message: " 
-                                                + e.InnerException?.Message
+                                                     + "\nInner exception message: " 
+                                                     + e.InnerException?.Message
                                                 // + "\nStack trace: " + e.StackTrace
                                                 );
             Console.WriteLine(errorMessage + "\nStackTrace: " + e.StackTrace);

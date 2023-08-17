@@ -43,6 +43,12 @@ public class SessionManager : ISessionManager<Session>
         return lastSession;
     }
 
+    public async Task<Session> GetSessionByClientId(long clientId)
+    {
+        return this.sessions
+            .FirstOrDefault(x => x.ClientId == clientId);
+    }
+
     public async Task TerminateSession(Session session)
     {
         this.sessions.Remove(session);

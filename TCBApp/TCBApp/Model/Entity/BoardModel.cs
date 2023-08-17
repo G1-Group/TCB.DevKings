@@ -13,12 +13,12 @@ public class BoardModel : ModelBase
     [Column("owner_id")]
     public long OwnerId { get; set; }
     [NotMapped]
-    public Client Owner { get; set; }
+    public virtual Client Owner { get; set; }
     
     [Column("board_status")]
     public BoardStatus BoardStatus { get; set; }
     
     [NotMapped]
-    public List<Message> Messages { get; set; }
+    public virtual List<Message> Messages { get; set; }
 
 }

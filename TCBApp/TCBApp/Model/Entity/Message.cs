@@ -12,19 +12,19 @@ public class Message : ModelBase
     public long FromId { get; set; }
     
     [NotMapped]
-    public Client Client { get; set; }
+    public virtual Client Client { get; set; }
     
     [Column("content")]
     public Telegram.Bot.Types.Message Content { get; set; }
     [Column("conversation_id")]
     public long? ConversationId { get; set; }
     [NotMapped]
-    public ChatModel? Conversation { get; set; }
+    public virtual ChatModel? Conversation { get; set; }
     
     [Column("board_id")]
     public long? BoardId { get; set; }
     [NotMapped]
-    public BoardModel? Board { get; set; }
+    public virtual BoardModel? Board { get; set; }
     
     [Column("message_type")]
     public MessageType MessageType { get; set; }

@@ -13,10 +13,13 @@ public class DataContext:DbContext
 
     public DataContext()
     {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        optionsBuilder
+            .UseLazyLoadingProxies();
         optionsBuilder.UseNpgsql(Settings.dbConnectionString);
         base.OnConfiguring(optionsBuilder);
     }

@@ -59,9 +59,9 @@ public class ClientDashboardController : ControllerBase
 
     protected override async Task HandleUpdate(UserControllerContext context)
     {
-        if (message?.Type is MessageType.Text)
+        if (context.Message?.Type is MessageType.Text)
         {
-            string text = message?.Text;
+            string text = context.Message?.Text;
             switch (text)
             {
                 case "Boards":

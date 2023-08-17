@@ -9,7 +9,7 @@ public class Client : ModelBase
     [Column("user_id")]
     public long  UserId { get; set; }
     [NotMapped]
-    public User User { get; set; } 
+    public virtual User User { get; set; } 
     [Column("user_name")]
     public string  UserName { get; set; }
     [Column("nickname")]
@@ -20,13 +20,13 @@ public class Client : ModelBase
     public bool IsPremium { get; set; }
 
     [NotMapped]
-    public List<Message> Messages { get; set; }
+    public virtual List<Message> Messages { get; set; }
 
     [NotMapped]
-    public List<BoardModel> Boards { get; set; }
+    public virtual List<BoardModel> Boards { get; set; }
     [NotMapped]
-    public List<ChatModel> ToConversations { get; set; }
+    public virtual List<ChatModel> ToConversations { get; set; }
 
     [NotMapped]
-    public List<ChatModel> FromConversations { get; set; }
+    public virtual List<ChatModel> FromConversations { get; set; }
 }

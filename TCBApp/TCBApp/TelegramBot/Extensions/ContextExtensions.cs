@@ -22,8 +22,10 @@ public static class ContextExtensions
     
     public static async Task<Message> SendTextMessage(this UserControllerContext context, string text, IReplyMarkup? replyMarkup = null, ParseMode? parseMode = null)
     {
+        if (context.Update?.Message?.Chat?.Id == null)
+            return null;
         return await TelegramBot._client.SendTextMessageAsync(
-            context.Update.Message!.Chat.Id, 
+            context.Update.Message.Chat.Id, 
             text, replyMarkup: replyMarkup, 
             parseMode: parseMode);
     }
@@ -43,6 +45,22 @@ public static class ContextExtensions
     public static async Task<Message> SendBoldTextMessage(this UserControllerContext context, string text, IReplyMarkup? replyMarkup = null, ParseMode? parseMode = null)
     {
         return await context.SendTextMessage($"<b>{(string.IsNullOrEmpty(text) ? "Empty" : text)}</b>", parseMode: parseMode ?? ParseMode.Html, replyMarkup: replyMarkup);
+    }
+
+    public static void Reset(this UserControllerContext context)
+    {
+        if (context.Session is null)
+            return;
+        if (context.Session.ClientId is not null)
+        {
+            context.Session.Controller = nameof(ClientDashboardController);
+            context.Session.Action = nameof(ClientDashboardController.Index);
+        }
+        else
+        {
+            context.Session.Controller = null;
+            context.Session.Action = null;
+        }
     }
     
     
