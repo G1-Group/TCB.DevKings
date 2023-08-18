@@ -122,10 +122,12 @@ public static class KeyboardButtonExtensions
 
     public static InlineKeyboardMarkup MyBoardsKeyboardMarkup(this UserControllerContext context,List<BoardModel> boards)
     {
-       var inlineKeyboardButtons = new List<InlineKeyboardButton>();
+        int i = 0;
+       var inlineKeyboardButtons = new InlineKeyboardButton[]{};
         foreach (var boardModel in boards)
         {
-            inlineKeyboardButtons.Add(new InlineKeyboardButton(boardModel.NickName));
+            inlineKeyboardButtons[i]=boardModel.NickName;
+            i++;
         }
 
         return inlineKeyboardButtons.ToArray();
