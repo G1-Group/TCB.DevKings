@@ -73,7 +73,7 @@ public class BoardController : ControllerBase
         if (res is Message)
             await context.SendTextMessage("Xabar yuborildi✅", context.FindBoardNickNameReplyKeyboardMarkup());
         else
-            await context.SendTextMessage("Xabar yuborilmadi.Xatolik yuz bedi❌",
+            await context.SendTextMessage("Xabar yuborilmadi.Xatolik yuz berdi❌",
                 context.FindBoardNickNameReplyKeyboardMarkup());
     }
 
@@ -100,13 +100,10 @@ public class BoardController : ControllerBase
         var allBoards = await allBoardsQuery.ToListAsync();
         string message = $"All boards count: {allBoards.Count};\n";
 
-        message += string.Join(
-            "\n",
-            allBoards.Select(board => $"{board.NickName} | {board.BoardStatus};")
-        );
+     
 
-        await context.SendTextMessage($"<code>{message}</code>", parseMode: ParseMode.Html,
-            replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
+        await context.SendTextMessage($"<code>Your Boards </code>", parseMode: ParseMode.Html,
+            replyMarkup: context.MyBoardsKeyboardMarkup(allBoards));
     }
 
     public async Task Index(UserControllerContext context)

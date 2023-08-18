@@ -1,3 +1,4 @@
+using TCBApp.Models;
 using TCBApp.TelegramBot.Controllers;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -118,7 +119,17 @@ public static class KeyboardButtonExtensions
 
         return MakeDefaultReplyKeyboardMarkup(buttons);
     }
-    
+
+    public static InlineKeyboardMarkup MyBoardsKeyboardMarkup(this UserControllerContext context,List<BoardModel> boards)
+    {
+       var inlineKeyboardButtons = new List<InlineKeyboardButton>();
+        foreach (var boardModel in boards)
+        {
+            inlineKeyboardButtons.Add(new InlineKeyboardButton(boardModel.NickName));
+        }
+
+        return inlineKeyboardButtons.ToArray();
+    }
     
     public static ReplyKeyboardMarkup Back(this UserControllerContext context)
         => MakeDefaultReplyKeyboardMarkup(new KeyboardButton("Back"));
