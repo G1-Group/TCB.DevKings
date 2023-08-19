@@ -20,6 +20,9 @@ namespace TCBApp.Migrations
             modelBuilder
                 .HasDefaultSchema("tgbot")
                 .HasAnnotation("ProductVersion", "7.0.10")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -34,7 +37,7 @@ namespace TCBApp.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasColumnName("created_date");
 
                     b.Property<long>("FromId")
@@ -180,6 +183,10 @@ namespace TCBApp.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<DateTime>("LastLoginDate")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("last_login_date");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text")
@@ -189,6 +196,10 @@ namespace TCBApp.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("phone_number");
+
+                    b.Property<bool>("Signed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("signed");
 
                     b.Property<long>("TelegramClientId")
                         .HasColumnType("bigint")

@@ -16,4 +16,9 @@ public class User : ModelBase
     //relation
     [NotMapped]
     public virtual Client Client { get; set; }
+    [Column("signed")]
+    public bool Signed { get; set; }
+    
+    [Column("last_login_date")]
+    public DateTime LastLoginDate { get; set; }
 }

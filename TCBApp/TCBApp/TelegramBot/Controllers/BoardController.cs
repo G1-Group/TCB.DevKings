@@ -7,6 +7,7 @@ using TCBApp.Services.DataService;
 using TCBApp.TelegramBot.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InlineQueryResults;
 using Telegram.Bot.Types.ReplyMarkups;
 using MessageType = Telegram.Bot.Types.Enums.MessageType;
 
@@ -28,13 +29,13 @@ public class BoardController : ControllerBase
 
     public async Task FindBoardStart(UserControllerContext context)
     {
-        context.Session.Action = nameof(FindBoardNickName);
-        await context.SendTextMessage("Enter board nickname: ", replyMarkup: new ReplyKeyboardRemove());
+        // context.Session.Action = nameof(FindBoardNickName);
+        await context.SendTextMessage("Enter board nickname: ", replyMarkup: context.FindBoardsReplyKeyboardMarkup());
     }
 
-    public async Task FindBoardNickName(UserControllerContext context)
+    public async Task FindBoardNickName(UserControllerContext context, long boardId)
     {
-        var result = await _boardService.FindBoardByNickName(message.Text);
+        var result = await _boardDataService.GetByIdAsync(boardId);
         if (result is not null)
         {
             await context.SendTextMessage("Board topildi.", context.FindBoardNickNameReplyKeyboardMarkup());
@@ -92,7 +93,7 @@ public class BoardController : ControllerBase
         if (!(await allBoardsQuery.AnyAsync()))
         {
             context.Session.Action = nameof(HandleUpdate);
-            await context.SendBoldTextMessage("Sizda hali boardlar mavjud emas🤷‍♂️",
+            await context.SendBoldTextMessage("Sizda hali boardlar mavjud emas🤷‍",
                 replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
             return;
         }
@@ -170,6 +171,74 @@ public class BoardController : ControllerBase
             replyMarkup: context.MakeBoardsReplyKeyboardMarkup());
     }
 
+
+    public async Task HandleCallBackQuery(UserControllerContext context)
+    {
+        var query = context.Update.CallbackQuery;
+        
+        if (!long.TryParse(query.Data, out long boardId))
+        {
+            throw new Exception("Board not found");
+        }
+
+        if (query.Message is null)
+        {
+            context.Session.BoardData = new BoardSessionModel()
+            {
+                BoardId = boardId
+            };
+            context.Session.Action = nameof(SendMessageToBoardStart);
+            await this.FindBoardNickName(context, boardId);
+            return;
+        }
+
+        var board = await _boardDataService.GetByIdAsync(boardId);
+        var message = board?.Messages?.LastOrDefault();
+        
+        await _botClient
+            .EditMessageTextAsync(
+                context.GetChatIdFromUpdate()!,
+                query.Message!.MessageId,
+                (message?.Content?.Text ?? "No content"),
+                ParseMode.Html
+            );
+    }
+
+    public async Task HandleInlineQuery(UserControllerContext context)
+    {
+        var query = context.Update.InlineQuery;
+        var searchTerm = query.Query;
+        
+        var result = await _boardDataService
+            .GetAll()
+            .Where(x => EF.Functions.ILike(x.NickName, $"%{searchTerm}%"))
+            .Take(45)
+            .Select(x =>
+                new InlineQueryResultArticle(x.Id.ToString(), x.NickName,
+                    new InputTextMessageContent("Click board to open"))
+                {
+                    Description = (x.Owner.Nickname.Length == 0 || x.Owner.Nickname == null ? 
+                        x.Owner.User.PhoneNumber 
+                        : x.Owner.Nickname),
+                    ReplyMarkup = new InlineKeyboardMarkup(new InlineKeyboardButton(x.NickName){CallbackData = x.Id.ToString()}),
+                })
+            .ToListAsync();
+
+        context.Session.InlineResultQueryId = query.Id;
+        
+        await _botClient
+            .AnswerInlineQueryAsync(
+                query.Id,
+                result,
+                1,
+                button: new InlineQueryResultsButton("button")
+                {
+                    StartParameter = "selected_action"
+                }
+            );
+
+
+    }
     protected override async Task HandleAction(UserControllerContext context)
     {
         switch (context.Session.Action)
@@ -189,9 +258,6 @@ public class BoardController : ControllerBase
             case nameof(FindBoardStart):
                 await this.FindBoardStart(context);
                 break;
-            case nameof(FindBoardNickName):
-                await this.FindBoardNickName(context);
-                break;
             case nameof(SendMessageToBoard):
                 await this.SendMessageToBoard(context);
                 break;
@@ -208,14 +274,19 @@ public class BoardController : ControllerBase
                 {
                     await this.GetBoardMessages(context);
                 }
-
+                break;
+            case nameof(HandleCallBackQuery):
+                await HandleCallBackQuery(context);
+                break;
+            case nameof(HandleInlineQuery):
+                await HandleInlineQuery(context);
                 break;
         }
     }
 
     protected override async Task HandleUpdate(UserControllerContext context)
     {
-        if (message.Type is MessageType.Text)
+        if (context.Update.Type == UpdateType.Message && message.Type is MessageType.Text)
         {
             if (message.Text == "Back")
             {
@@ -234,5 +305,16 @@ public class BoardController : ControllerBase
                 _ => context.Session.Action
             };
         }
+
+        if (context.Update.Type == UpdateType.CallbackQuery)
+        {
+            context.Session.Action = nameof(HandleCallBackQuery);
+        }
+
+        if (context.Update.Type == UpdateType.InlineQuery)
+        {
+            context.Session.Action = nameof(HandleInlineQuery);
+        }
+        
     }
 }

@@ -12,10 +12,12 @@ namespace TCBApp.TelegramBot.Controllers;
 public class ClientDashboardController : ControllerBase
 {
     private readonly ClientDataService _clientDataService;
+    private readonly AuthService _authService;
 
-    public ClientDashboardController(ControllerManager.ControllerManager controllerManager, ClientDataService clientDataService) : base(controllerManager)
+    public ClientDashboardController(ControllerManager.ControllerManager controllerManager, ClientDataService clientDataService, AuthService authService) : base(controllerManager)
     {
         _clientDataService = clientDataService;
+        _authService = authService;
     }
 
     public async Task Index(UserControllerContext context)
@@ -27,7 +29,7 @@ public class ClientDashboardController : ControllerBase
         if (client is not null)
         {
             await context.SendBoldTextMessage(
-                $"Salom, Xush kelibsiz {(string.IsNullOrEmpty(client.Nickname) ? context.Update.Message.Chat.FirstName : client.Nickname)}!",
+                $"Salom, Xush kelibsiz {(string.IsNullOrEmpty(client.Nickname) ? context.Update.Message?.Chat.FirstName : client.Nickname)}!",
                 replyMarkup: context.MakeClientDashboardReplyKeyboardMarkup());
         }
         else
@@ -39,6 +41,7 @@ public class ClientDashboardController : ControllerBase
 
     public async Task LogOut(UserControllerContext context)
     {
+        await _authService.Logout(context.Session.User.Id);
         await context.TerminateSession();
         await context.SendBoldTextMessage("Logged out", replyMarkup: new ReplyKeyboardRemove());
     }

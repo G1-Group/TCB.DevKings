@@ -22,6 +22,8 @@ public abstract class ControllerBase
 
     public async Task Handle(UserControllerContext context)
     {
+        if (context.Update.Message?.ViaBot is not null || context.Update.Type == UpdateType.ChosenInlineResult)
+            return;
         SetUpdateMessage(context);
         string oldController = context.Session.Controller;
         await this.HandleUpdate(context);
