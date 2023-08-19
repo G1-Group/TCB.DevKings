@@ -50,7 +50,6 @@ public class AuthService : IAuthService
             throw new Exception("Unable to add new client");
     }
 
-
     public async Task<Client?> Login(UserLoginModel user)
     {
         var userInfo = _userDataService.GetAll()
@@ -63,9 +62,24 @@ public class AuthService : IAuthService
         
         if (userInfo is User)
         {
+            userInfo.Signed = true;
+            userInfo.LastLoginDate = DateTime.Now;
+
+            await _userDataService.UpdateAsync(userInfo);
+            
             return userInfo.Client;
         }
 
         return null;
+    }
+
+    public async Task Logout(long userId)
+    {
+        var user = await _userDataService.GetByIdAsync(userId);
+        if (user is null)
+            throw new Exception("User not found");
+
+        user.Signed = false;
+        await _userDataService.UpdateAsync(user);
     }
 }

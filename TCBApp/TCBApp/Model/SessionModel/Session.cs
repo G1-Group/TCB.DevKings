@@ -12,4 +12,5 @@ public class Session
     public UserRegistrationModel RegistrationModel { get; set; }
     public BoardSessionModel BoardData{ get; set; }
     public LoginSessionModel LoginData { get; set; }
+    public string? InlineResultQueryId { get; set; }
 }

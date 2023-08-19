@@ -122,15 +122,24 @@ public static class KeyboardButtonExtensions
 
     public static InlineKeyboardMarkup MyBoardsKeyboardMarkup(this UserControllerContext context,List<BoardModel> boards)
     {
-        int i = 0; 
-        InlineKeyboardButton[] inlineKeyboardButtons = new InlineKeyboardButton[boards.Count];
-        foreach (var boardModel in boards)
-        {
-            inlineKeyboardButtons[i]=boardModel.NickName;
-            i++;
-        }
+        IEnumerable<InlineKeyboardButton> buttons = boards
+            .Select(board =>
+                new InlineKeyboardButton(board.NickName)
+                {
+                    CallbackData = board.Id.ToString(),
+                });
 
-        return inlineKeyboardButtons.ToArray();
+        return new InlineKeyboardMarkup(buttons);
+    }
+    
+    public static InlineKeyboardMarkup FindBoardsReplyKeyboardMarkup(this UserControllerContext context)
+    {
+        var inlineButton = new InlineKeyboardButton("find")
+        {
+            SwitchInlineQueryCurrentChat = ""
+        };
+
+        return new InlineKeyboardMarkup(inlineButton);
     }
     
     public static ReplyKeyboardMarkup Back(this UserControllerContext context)

@@ -1,4 +1,5 @@
 ﻿using CloneExtensions;
+using Microsoft.EntityFrameworkCore;
 using TCBApp.Services;
 using TCBApp.Services.DataContexts;
 using TCBApp.Services.DataService;
@@ -65,10 +66,12 @@ public class TelegramBot
         //Session handler
         this.updateHandlers.Add(async (context, token) =>
         {
-            if (context.Update?.Message?.Chat.Id is null)
+            long? chatId = context.GetChatIdFromUpdate();
+            
+            if (chatId is null)
                 throw new Exception("Chat id not found to find session");
 
-            var session = await SessionManager.GetSessionByChatId(context.Update.Message.Chat.Id);
+            var session = await SessionManager.GetSessionByChatId(chatId.Value);
             context.Session = session;
             context.TerminateSession = async () => await this.SessionManager.TerminateSession(context.Session);
         });
@@ -79,21 +82,66 @@ public class TelegramBot
                 context.Update.Message?.Text ?? context.Update.Message?.Caption);
         });
 
+        this.updateHandlers.Add(async (context, token) =>
+        {
+            if (context.Update.Type != UpdateType.ChosenInlineResult)
+                return;
+            
+            var result = context.Update.ChosenInlineResult;
+
+            string queryId = context.Session.InlineResultQueryId;
+            context.Session.Controller = nameof(BoardController);
+            context.Session.Action = nameof(BoardController.SendMessageToBoardStart);
+        });
+        
+        this.updateHandlers.Add(async (context, token) =>
+        {
+            var signedUser = await _userDataService
+                .GetAll()
+                .FirstOrDefaultAsync(user =>
+                    user.Signed
+                    && user.TelegramClientId == context.GetChatIdFromUpdate());
+            if (signedUser is not null)
+            {
+                context.Session.User = signedUser;
+                context.Session.ClientId = signedUser.Client.Id;
+            }
+        });
+        
         //Check for auth
         List<string> authRequiredControllers = new List<string>()
         {
             nameof(BoardController),
-            nameof(ClientDashboardController)
+            nameof(ClientDashboardController),
+            nameof(ConversationsController),
+            nameof(ClientInfoController),
+            nameof(SettingsController)
         };
+        
         this.updateHandlers.Add(async (context, token) =>
         {
-            if (context.Session is not null && authRequiredControllers.Contains(context.Session.Controller) &&
-                context.Session.ClientId is null)
+            if (context.Session is not null )
             {
-                await context.SendErrorMessage("Unauthorized", 401);
+                if (context.Session.ClientId is not null)
+                {
+                    string controller = context.Session.Controller ?? nameof(HomeController);
+                    if (nameof(HomeController) == controller || controller == nameof(AuthController))
+                    {
+                        context.Session.Controller = nameof(ClientDashboardController);
+                        context.Session.Action = nameof(ClientDashboardController.Index);
+                    } 
+                } else if (authRequiredControllers.Contains(context.Session.Controller))
+                {
+                    await context.SendErrorMessage("Unauthorized", 401);
+                    context.Session.Controller = null;
+                    context.Session.Action = null;
+                };
             }
+            
+            
+            
         });
-
+        
 
         this.updateHandlers.Insert(this.updateHandlers.Count,
             async (context, token) => { await context.Forward(this.ControllerManager); });
@@ -115,7 +163,7 @@ public class TelegramBot
     {
         UserControllerContext context = new UserControllerContext()
         {
-            Update = update.GetClone()
+            Update = update
         };
 
         try

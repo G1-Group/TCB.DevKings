@@ -22,10 +22,11 @@ public static class ContextExtensions
     
     public static async Task<Message> SendTextMessage(this UserControllerContext context, string text, IReplyMarkup? replyMarkup = null, ParseMode? parseMode = null)
     {
-        if (context.Update?.Message?.Chat?.Id == null)
+        long? chatId = context.GetChatIdFromUpdate();
+        if (chatId == null)
             return null;
         return await TelegramBot._client.SendTextMessageAsync(
-            context.Update.Message.Chat.Id, 
+            chatId, 
             text, replyMarkup: replyMarkup, 
             parseMode: parseMode);
     }
@@ -61,6 +62,20 @@ public static class ContextExtensions
             context.Session.Controller = null;
             context.Session.Action = null;
         }
+    }
+
+    public static long? GetChatIdFromUpdate(this UserControllerContext context)
+    {
+        var update = context.Update;
+        return update.Type switch
+        {
+            UpdateType.Message => update.Message?.Chat.Id,
+            UpdateType.CallbackQuery => update.CallbackQuery?.From.Id,
+            UpdateType.EditedMessage => update.EditedMessage?.Chat.Id,
+            UpdateType.InlineQuery => update.InlineQuery?.From.Id,
+            UpdateType.ChosenInlineResult => update.ChosenInlineResult?.From.Id,
+            _ => null
+        };
     }
     
     
