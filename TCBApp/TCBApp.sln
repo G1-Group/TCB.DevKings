@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCBApp", "TCBApp\TCBApp.csproj", "{897E87F3-3912-4F9C-907D-C5512C4A754E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCBApp.Core", "TCBApp.Core\TCBApp.Core.csproj", "{C480D992-26D3-4ACA-A264-C5471D441FC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCBApp.WebApi", "TCBApp.WebApi\TCBApp.WebApi.csproj", "{451C4524-93F9-4758-A85F-7D9B532AE0B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{897E87F3-3912-4F9C-907D-C5512C4A754E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{897E87F3-3912-4F9C-907D-C5512C4A754E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{897E87F3-3912-4F9C-907D-C5512C4A754E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C480D992-26D3-4ACA-A264-C5471D441FC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C480D992-26D3-4ACA-A264-C5471D441FC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C480D992-26D3-4ACA-A264-C5471D441FC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C480D992-26D3-4ACA-A264-C5471D441FC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{451C4524-93F9-4758-A85F-7D9B532AE0B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{451C4524-93F9-4758-A85F-7D9B532AE0B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{451C4524-93F9-4758-A85F-7D9B532AE0B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{451C4524-93F9-4758-A85F-7D9B532AE0B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

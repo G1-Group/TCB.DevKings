@@ -10,7 +10,7 @@ public class ClientController:ControllerBase
     private ClientService _clientService;
     private string userName;
     private string nickName;
-    public ClientController(ITelegramBotClient botClient,ClientService clientService) : base(botClient)
+    public ClientController(ITelegramBotClient botClient,ClientService clientService, ControllerManager.ControllerManager controllerManager) : base(controllerManager)
     {
         _clientService = clientService;
     }
@@ -19,10 +19,12 @@ public class ClientController:ControllerBase
     public void ClientUpdateUserName(UserControllerContext context)
     {
         userName = context.Update.Message.Text;
-        _clientService.UpdateClientUserName(new Client()
-        {   ClientId = context.Update.Message.Chat.Id,
-            UserName = userName
-        });
+        // _clientService.UpdateClientUserName(new Client()
+        // {   
+        //     
+        //     // ClientId = context.Update.Message.Chat.Id,
+        //     UserName = userName
+        // });
         _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Succesfuly changed");
         context.Session.Action = "UpdateClientUsername";
 
@@ -31,16 +33,16 @@ public class ClientController:ControllerBase
     public void ClientUpdateNickName(UserControllerContext context)
     {
         nickName = context.Update.Message.Text;
-        _clientService.UpdateClientNickName(new Client()
-        {
-            ClientId = context.Update.Message.Chat.Id,
-            Nickname = nickName
-        });
+        // _clientService.UpdateClientNickName(new Client()
+        // {
+        //     // ClientId = context.Update.Message.Chat.Id,
+        //     Nickname = nickName
+        // });
         _botClient.SendTextMessageAsync(context.Update.Message.Chat.Id, "Succesfuly changed");
         context.Session.Action = "UpdateClientNickname";
 
     }
-    public override void HandleAction(UserControllerContext context)
+    protected override async Task HandleAction(UserControllerContext context)
     {
         if (context.Session.Action==nameof(ClientUpdateUserName))
         {
@@ -50,5 +52,12 @@ public class ClientController:ControllerBase
         {
             this.ClientUpdateNickName(context);
         }
+        
+        
+    }
+
+    protected override Task HandleUpdate(UserControllerContext context)
+    {
+        throw new NotImplementedException();
     }
 }

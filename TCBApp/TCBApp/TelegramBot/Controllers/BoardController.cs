@@ -133,7 +133,7 @@ public class BoardController : ControllerBase
         {
             foreach (Message m in res)
             {
-                var tgMessage = m.Content;
+                var tgMessage = (Telegram.Bot.Types.Message)m.Content;
                 if (tgMessage.Type == MessageType.Text)
                     await context.SendTextMessage($"{tgMessage.Text}");
                 else
@@ -199,7 +199,7 @@ public class BoardController : ControllerBase
             .EditMessageTextAsync(
                 context.GetChatIdFromUpdate()!,
                 query.Message!.MessageId,
-                (message?.Content?.Text ?? "No content"),
+                ((message?.Content as Telegram.Bot.Types.Message)?.Text ?? "No content"),
                 ParseMode.Html
             );
     }

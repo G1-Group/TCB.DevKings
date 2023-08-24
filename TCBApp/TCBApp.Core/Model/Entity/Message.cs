@@ -15,7 +15,7 @@ public class Message : ModelBase
     public virtual Client Client { get; set; }
     
     [Column("content")]
-    public Telegram.Bot.Types.Message Content { get; set; }
+    public object Content { get; set; }
     [Column("conversation_id")]
     public long? ConversationId { get; set; }
     [NotMapped]
