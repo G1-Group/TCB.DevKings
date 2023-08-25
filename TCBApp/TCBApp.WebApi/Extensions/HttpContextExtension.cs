@@ -5,17 +5,17 @@ namespace TCBApp.WebApi.Extensions;
 
 public static class HttpContextExtension
 {
-    public static async Task<T> ConvertByModelRerques<T>(this HttpContext context,HttpListenerRequest request)
+    public static async Task<T> ConvertByModelRequest<T>(this HttpContext context)
     {
-        using (StreamReader reader = new StreamReader(request.InputStream))
+        using (StreamReader reader = new StreamReader(context.Request.InputStream))
         {
             string json = await reader.ReadToEndAsync();
             return JsonSerializer.Deserialize<T>(json);
         }
     }
-    public static async Task<T> ConvertByModelResponse<T>(this HttpContext context,HttpListenerResponse response)
+    public static async Task<T> ConvertByModelResponse<T>(this HttpContext context)
     {
-        using (StreamReader reader = new StreamReader(response.OutputStream))
+        using (StreamReader reader = new StreamReader(context.Response.OutputStream))
         {
             string json = await reader.ReadToEndAsync();
             return JsonSerializer.Deserialize<T>(json);
