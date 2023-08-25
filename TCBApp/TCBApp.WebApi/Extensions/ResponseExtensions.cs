@@ -5,7 +5,7 @@ namespace TCBApp.WebApi.Extensions;
 
 public static class ResponseExtensions
 {
-    public static async Task<T?> ConvertAsync<T>(this HttpListenerResponse response )
+    public static async Task<T> ConvertAsync<T>(this HttpListenerResponse response )
     {
         
         using (StreamReader reader = new StreamReader(response.OutputStream))
