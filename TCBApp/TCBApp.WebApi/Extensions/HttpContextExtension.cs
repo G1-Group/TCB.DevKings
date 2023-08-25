@@ -5,7 +5,7 @@ namespace TCBApp.WebApi.Extensions;
 
 public static class HttpContextExtension
 {
-    public static async Task<T> ConvertByModel<T>(this HttpContext context,HttpWebRequest requestBody)
+    public static async Task<T> ConvertByModel<T>(this HttpContext context)
     {
         using (StreamReader reader = new StreamReader(context.Request.InputStream))
         {
