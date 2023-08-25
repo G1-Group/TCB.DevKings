@@ -13,4 +13,12 @@ public static class HttpContextExtension
             return JsonSerializer.Deserialize<T>(json);
         }
     }
+
+    public static async Task<string> Convert(this HttpContext context)
+    {
+        using (StreamReader reader = new StreamReader(context.Request.InputStream))
+        {
+            return await reader.ReadToEndAsync();
+        }
+    }
 }
