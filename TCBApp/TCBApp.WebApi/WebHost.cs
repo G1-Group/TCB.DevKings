@@ -11,6 +11,7 @@ public class WebHost
 
     private LinkedList<Func<HttpContext, NextHandlerDelegate, Task>> middlewares;
     private List<IMiddleware> MiddlewareCollections = new List<IMiddleware>();
+    
 
     public WebHost(IoCContainer container)
     {
@@ -64,5 +65,9 @@ public class WebHost
         _httpListener.Start();
         Console.WriteLine("Server is started on {0}.", _httpListener.Prefixes.ElementAt(0));
         await this.AcceptContextAsync();
+    }
+    public void RegisterMiddleware<T>() where T:IMiddleware
+    {
+        _container.Register<Interfaces.IMiddleware>();
     }
 }
