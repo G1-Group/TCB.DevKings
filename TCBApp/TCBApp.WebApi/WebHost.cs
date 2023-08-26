@@ -6,13 +6,15 @@ namespace TCBApp.WebApi;
 
 public class WebHost
 {
+    public IoCContainer _container { get; }
     protected HttpListener _httpListener;
 
     private LinkedList<Func<HttpContext, NextHandlerDelegate, Task>> middlewares;
     private List<IMiddleware> MiddlewareCollections = new List<IMiddleware>();
 
-    public WebHost()
+    public WebHost(IoCContainer container)
     {
+        _container = container;
         middlewares = new LinkedList<Func<HttpContext, NextHandlerDelegate, Task>>();
     }
 
