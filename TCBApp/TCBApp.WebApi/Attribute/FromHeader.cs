@@ -1,6 +1,5 @@
 namespace TCBApp.WebApi.Attribute;
 
-public class FromHeader:System.Attribute
+public class FromHeader : System.Attribute
 {
-    
 }
