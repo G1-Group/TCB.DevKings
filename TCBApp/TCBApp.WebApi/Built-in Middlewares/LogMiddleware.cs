@@ -19,4 +19,5 @@ public class LogMiddleware : IMiddleware
         Console.WriteLine("out-coming context");
         //out-coming context 
     }
+    
 }
