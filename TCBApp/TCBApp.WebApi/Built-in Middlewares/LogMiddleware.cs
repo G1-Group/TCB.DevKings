@@ -9,14 +9,7 @@ public class LogMiddleware : IMiddleware
 {
     public async Task ExecuteAsync(HttpContext context, NextHandlerDelegate? next)
     {
-        // context. write anything
-        //in-coming context
-        Console.WriteLine("In-coming context");
-        if (next is not null)
-            await next();
-
-        await Task.Delay(5000);
-        Console.WriteLine("out-coming context");
-        //out-coming context 
+        Console.WriteLine($"Ip: {context.Request.RemoteEndPoint} Request: {context.QueryString.ToString()}  " +
+                          $"Response status code: {context.Response.StatusCode}  Method: {next.Method} Time: {DateTime.Now}");
     }
 }
