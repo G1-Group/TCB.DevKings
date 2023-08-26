@@ -12,5 +12,4 @@ public class LogMiddleware : IMiddleware
         Console.WriteLine($"Ip: {context.Request.RemoteEndPoint} Request: {context.QueryString.ToString()}   " +
                           $"Response status code: {context.Response.StatusCode}  Method: {next.Method} Time: {DateTime.Now}");
     }
-    
 }
