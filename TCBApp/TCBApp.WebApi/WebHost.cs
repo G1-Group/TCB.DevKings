@@ -65,6 +65,8 @@ public class WebHost
         Console.WriteLine("Server is started on {0}.", _httpListener.Prefixes.ElementAt(0));
         await this.AcceptContextAsync();
     }
+    
+    
     public void RegisterController<T>() where T : ControllerBase
     {
         var controller = Activator.CreateInstance<T>();
