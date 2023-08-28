@@ -13,9 +13,9 @@ public class WebHost
     private List<IMiddleware> MiddlewareCollections = new List<IMiddleware>();
     
 
-    public WebHost(IoCContainer container)
+    public WebHost(IoCContainer? container = null)
     {
-        _container = container;
+        _container = container ?? new IoCContainer();
         middlewares = new LinkedList<Func<HttpContext, NextHandlerDelegate, Task>>();
     }
 
