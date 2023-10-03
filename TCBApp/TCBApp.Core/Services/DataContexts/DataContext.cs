@@ -20,7 +20,7 @@ public class DataContext:DbContext
     {
         optionsBuilder
             .UseLazyLoadingProxies();
-        optionsBuilder.UseNpgsql("Host=localhost; Port=5432; Database=tgbot; username=postgres; password=159357Dax");
+        optionsBuilder.UseNpgsql("host=213.230.65.55;port=5444;username=postgres;password=159357Dax;database=tcb_app");
         base.OnConfiguring(optionsBuilder);
     }
 

@@ -154,7 +154,16 @@ public class TelegramBot
         var options = new ReceiverOptions();
         _client.StartReceiving(OnUpdate, ErrorMessage, options, CancellationToken.None);
         Console.WriteLine("{0} | Bot is starting...", DateTime.Now);
-        Console.ReadKey();
+        CancellationTokenSource cts = new CancellationTokenSource();
+        Console.CancelKeyPress += (sender, args) =>
+        {
+            cts.Cancel();
+        };
+
+        while (!cts.IsCancellationRequested)
+        {
+            
+        }
     }
 
 
