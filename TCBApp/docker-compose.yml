@@ -1,0 +1,7 @@
+version: "3.4"
+services:
+  TCB.bot:
+    image: tcb.bot:1.0
+    build:
+      context: .
+      dockerfile: TCBApp/Dockerfile
