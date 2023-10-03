@@ -14,8 +14,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Display dotnet version
-      run: dotnet --version
     - name: Build
       working-directory: ./TCBApp
       run: docker-compose build
