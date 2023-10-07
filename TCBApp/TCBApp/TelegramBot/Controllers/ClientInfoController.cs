@@ -19,8 +19,12 @@ public class ClientInfoController :ControllerBase
     public async Task Index(UserControllerContext context)
     {
         var client = await _clientDataService.GetByIdAsync(context.Session.ClientId.Value);
-        
-        await context.SendBoldTextMessage(client.Nickname,new ReplyKeyboardMarkup(new KeyboardButton("Back"))
+        var user = client.User;
+        string sendClientInfo = $"Phone: {user.PhoneNumber}\n" +
+                                $"Password: {user.Password}\n" +
+                                $"Nickname: {client.Nickname ?? null}\n" +
+                                $"Username: {client.UserName?? null}";
+        await context.SendBoldTextMessage(sendClientInfo,new ReplyKeyboardMarkup(new KeyboardButton("Back"))
         {
             ResizeKeyboard = true,
             OneTimeKeyboard = true
