@@ -28,24 +28,24 @@ public class ClientInfoController :ControllerBase
                                 $"Username: {client.UserName?? null}";
         await context.SendBoldTextMessage(sendClientInfo,context.MakeClientInfoReplyKeyboardMarkup());
     }
-    public async Task EnterNickName(UserControllerContext context)
+    public async Task EditNickName(UserControllerContext context)
     {
         await context.SendBoldTextMessage("Enter new nick name",context.MakeClientInfoReplyKeyboardMarkup());
-        context.Session.Action = nameof(EnterNickNameSave);
+        context.Session.Action = nameof(EditNickNameSave);
     }
-    public async Task EnterNickNameSave(UserControllerContext context)
+    public async Task EditNickNameSave(UserControllerContext context)
     {
         var client = await _clientDataService.GetByIdAsync(context.Session.ClientId.Value);
         var newNickname = context.Message.Text ?? string.Empty;
         await _clientService.UpdateClientNickName(context.Session.ClientId.Value, newNickname);
         await context.SendBoldTextMessage("Susses",context.MakeClientInfoReplyKeyboardMarkup());
     }
-    public async Task EnterUserName(UserControllerContext context)
+    public async Task EditUserName(UserControllerContext context)
     {
         await context.SendBoldTextMessage("Enter new user name",context.MakeClientInfoReplyKeyboardMarkup());
-        context.Session.Action = nameof(EnterUserNameSave);
+        context.Session.Action = nameof(EditUserNameSave);
     }
-    public async Task EnterUserNameSave(UserControllerContext context)
+    public async Task EditUserNameSave(UserControllerContext context)
     {
         var client = await _clientDataService.GetByIdAsync(context.Session.ClientId.Value);
         var newUserName = context.Message.Text ?? string.Empty;
@@ -61,17 +61,17 @@ public class ClientInfoController :ControllerBase
             case nameof(Index):
                 await this.Index(context);
                 break;
-            case nameof(EnterNickName):
-                await this.EnterNickName(context);
+            case nameof(EditNickName):
+                await this.EditNickName(context);
                 break; 
-            case nameof(EnterNickNameSave):
-                await this.EnterNickNameSave(context);
+            case nameof(EditNickNameSave):
+                await this.EditNickNameSave(context);
                 break;
-            case nameof(EnterUserName):
-                await this.EnterUserName(context);
+            case nameof(EditUserName):
+                await this.EditUserName(context);
                 break; 
-            case nameof(EnterUserNameSave):
-                await this.EnterUserNameSave(context);
+            case nameof(EditUserNameSave):
+                await this.EditUserNameSave(context);
                 break;
         }
     }
@@ -84,10 +84,10 @@ public class ClientInfoController :ControllerBase
             switch (text)
             {
                 case "Enter nick name":
-                    context.Session.Action = nameof(ClientInfoController.EnterNickName);
+                    context.Session.Action = nameof(ClientInfoController.EditNickName);
                     break;
                 case "Enter user name":
-                    context.Session.Action = nameof(ClientInfoController.EnterUserName);
+                    context.Session.Action = nameof(ClientInfoController.EditUserName);
                     break;
                 case "Back":
                     context.Session.Controller = nameof(ClientDashboardController);
