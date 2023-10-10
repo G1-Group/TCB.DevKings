@@ -12,6 +12,7 @@ namespace TCBApp.TelegramBot.ControllerManager;
 public class ControllerManager
 {
     private readonly ClientInfoController _clientInfoController;
+    private readonly ClientService _clientService;
     private readonly AuthController _authController;
     private readonly HomeController _homeController;
     private readonly ClientDashboardController _clientDashboardController;
@@ -48,7 +49,8 @@ public class ControllerManager
         this._authController = new AuthController(authService, this);
         this._clientDashboardController = new ClientDashboardController(this, clientDataService, authService);
         this._settingsController = new SettingsController(this,clientDataService, boardService);
-        _clientInfoController = new ClientInfoController(this,clientDataService);
+        _clientService = new ClientService(clientDataService);
+        _clientInfoController = new ClientInfoController(this,clientDataService,_clientService);
 
 
         // this._authController = new AuthController(botClient, new AuthService(dataService));
