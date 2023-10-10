@@ -147,5 +147,26 @@ public static class KeyboardButtonExtensions
     public static ReplyKeyboardMarkup StopConversationReplyKeyboardMarkup(this UserControllerContext context)
         => MakeDefaultReplyKeyboardMarkup(new KeyboardButton("stop"));
 
+    public static ReplyKeyboardMarkup MakeClientInfoReplyKeyboardMarkup(this UserControllerContext context)
+    {
+        var buttons = new List<List<KeyboardButton>>()
+        {
+            new List<KeyboardButton>()
+            {
+                new KeyboardButton("Enter nick name"),
+                new KeyboardButton("Enter user name"),
+            },new List<KeyboardButton>()
+            {
+                new KeyboardButton("Edit nick name"),
+                new KeyboardButton("Edit user name"),
+            },
+            new List<KeyboardButton>()
+            {
+                new KeyboardButton("Back")
+            }
+        };
+
+        return MakeDefaultReplyKeyboardMarkup(buttons);
+    }
     
 }

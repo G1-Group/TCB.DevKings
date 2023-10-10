@@ -1,7 +1,7 @@
 using TCBApp.Interface;
 using TCBApp.Models;
 
-namespace TCBApp.Services.DataService;
+namespace TCBApp.Services.Interface;
 
 public interface IUserDataService : IDataServiceBase<User>
 {
