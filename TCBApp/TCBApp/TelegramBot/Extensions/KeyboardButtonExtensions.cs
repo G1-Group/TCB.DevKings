@@ -153,10 +153,6 @@ public static class KeyboardButtonExtensions
         {
             new List<KeyboardButton>()
             {
-                new KeyboardButton("Enter nick name"),
-                new KeyboardButton("Enter user name"),
-            },new List<KeyboardButton>()
-            {
                 new KeyboardButton("Edit nick name"),
                 new KeyboardButton("Edit user name"),
             },
