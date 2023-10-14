@@ -9,4 +9,5 @@ public class ClientDataService : DataServiceBase<Client>
     public ClientDataService(DataContext context) : base(context)
     {
     }
+    
 }
